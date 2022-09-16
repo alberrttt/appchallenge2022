@@ -20,6 +20,7 @@ const default_style = StyleSheet.create({
 const styles = StyleSheet.create({
   text_dark: {
     ...default_style.default,
+    color: "#FFFF",
   },
   text_light: {
     ...default_style.default,
