@@ -7,24 +7,23 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { HomeScreen } from "./pages/home";
 import { TestScreen } from "./pages/test";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import colors from "./src/colors";
 const Tabs = createBottomTabNavigator();
 export default function App() {
-  return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <Tabs.Navigator
-          screenOptions={{
-            headerShown: false,
+	return (
+		<NavigationContainer>
+			<Tabs.Navigator
+				screenOptions={{
+					headerShown: false,
 
-            tabBarStyle: {
-              backgroundColor: "black",
-            },
-          }}
-        >
-          <Tabs.Screen name="Home" component={HomeScreen} />
-          <Tabs.Screen name="Test" component={TestScreen} />
-        </Tabs.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
-  );
+					tabBarStyle: {
+						backgroundColor: colors.Black,
+					},
+				}}
+			>
+				<Tabs.Screen name="Home" component={HomeScreen} />
+				<Tabs.Screen name="Test" component={TestScreen} />
+			</Tabs.Navigator>
+		</NavigationContainer>
+	);
 }
