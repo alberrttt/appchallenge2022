@@ -10,10 +10,7 @@ export function StyledText(props: TextProps) {
 	scheme = scheme ? scheme : "dark";
 	const style = styles[`text_${scheme}`];
 	const { style: _style, children, ...n_props } = props;
-	console.log({
-		...(_style as {}),
-		...style,
-	});
+
 	return (
 		<ReactText
 			{...n_props}

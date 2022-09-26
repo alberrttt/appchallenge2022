@@ -17,7 +17,6 @@ export function StyledView({
 	scheme = scheme === "dark" ? "dark" : "light";
 	const style = styles[`view_${scheme}`];
 	const { children, style: style_, ...props_ } = props;
-	console.log(safe);
 	const View2 = safe ? SafeAreaView : ReactView;
 	return (
 		<View2

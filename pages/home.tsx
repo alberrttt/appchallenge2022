@@ -1,3 +1,5 @@
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -6,10 +8,15 @@ import {
 	SafeAreaView,
 	useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { ScreenProps } from "react-native-screens";
+import { NativeStackParams, Stack } from "../App";
 import { StyledText } from "../components/text";
 import { StyledView } from "../components/view";
-export function HomeScreen() {
+export const HomeScreen = ({
+	navigation,
+}: NativeStackScreenProps<NativeStackParams, "Home">) => {
 	const insets = useSafeAreaInsets();
+	const navigator = useNavigation();
 	return (
 		<StyledView
 			style={{
@@ -64,28 +71,19 @@ export function HomeScreen() {
 								quae? Consequatur tempore pariatur magni animi
 								deserunt. Adipisci iure deleniti at sint?
 							</StyledText>
-							<View
-								style={{
-									backgroundColor: "#249D9F",
-									padding: 8,
-									borderRadius: 4,
+							<Button
+								title="Go to list"
+								onPress={() => {
+									navigation.push("List");
 								}}
-							>
-								<StyledText
-									style={{
-										fontSize: 16,
-									}}
-								>
-									Go to list
-								</StyledText>
-							</View>
+							/>
 						</View>
 					</View>
 				</View>
 			</View>
 		</StyledView>
 	);
-}
+};
 const styles = StyleSheet.create({
 	title_1: {
 		fontSize: 36,
