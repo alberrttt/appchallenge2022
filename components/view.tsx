@@ -6,22 +6,33 @@ import {
 	ViewProps,
 	View as ReactView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { styles as base_styles } from "../src/styles";
-export function View(props: ViewProps) {
-	const style = useMemo<typeof styles[keyof typeof styles]>(() => {
-		let scheme = useColorScheme();
-		scheme = scheme ? scheme : "dark";
-		return styles[`view_${scheme}`];
-	}, []);
-
-	return <ReactView {...props} style={style}></ReactView>;
+export function StyledView({
+	safe = false,
+	...props
+}: ViewProps & { safe?: boolean }) {
+	let scheme = useColorScheme();
+	console.log();
+	scheme = scheme === "dark" ? "dark" : "light";
+	const style = styles[`view_${scheme}`];
+	const { children, style: style_, ...props_ } = props;
+	console.log(safe);
+	const View2 = safe ? SafeAreaView : ReactView;
+	return (
+		<View2
+			{...props_}
+			style={{
+				...(style_ as {}),
+				...style,
+			}}
+		>
+			{children}
+		</View2>
+	);
 }
 const default_style = StyleSheet.create({
-	default: {
-		justifyContent: "center",
-		alignItems: "center",
-		padding: 8,
-	},
+	default: {},
 });
 const styles = StyleSheet.create({
 	view_dark: {

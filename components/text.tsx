@@ -1,28 +1,40 @@
 import { useMemo } from "react";
 import {
-  StyleSheet,
-  TextProps,
-  useColorScheme,
-  Text as ReactText,
+	StyleSheet,
+	TextProps,
+	useColorScheme,
+	Text as ReactText,
 } from "react-native";
-export function Text(props: TextProps) {
-  const style = useMemo<typeof styles[keyof typeof styles]>(() => {
-    let scheme = useColorScheme();
-    scheme = scheme ? scheme : "dark";
-    return styles[`text_${scheme}`];
-  }, []);
-
-  return <ReactText {...props} style={style}></ReactText>;
+export function StyledText(props: TextProps) {
+	let scheme = useColorScheme();
+	scheme = scheme ? scheme : "dark";
+	const style = styles[`text_${scheme}`];
+	const { style: _style, children, ...n_props } = props;
+	console.log({
+		...(_style as {}),
+		...style,
+	});
+	return (
+		<ReactText
+			{...n_props}
+			style={{
+				...(_style as {}),
+				...style,
+			}}
+		>
+			{children}
+		</ReactText>
+	);
 }
 const default_style = StyleSheet.create({
-  default: {},
+	default: {},
 });
 const styles = StyleSheet.create({
-  text_dark: {
-    ...default_style.default,
-    color: "#FFFF",
-  },
-  text_light: {
-    ...default_style.default,
-  },
+	text_dark: {
+		...default_style.default,
+		color: "#FFFF",
+	},
+	text_light: {
+		...default_style.default,
+	},
 });
