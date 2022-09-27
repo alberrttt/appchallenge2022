@@ -15,8 +15,8 @@ export function StyledText(props: TextProps) {
 		<ReactText
 			{...n_props}
 			style={{
-				...(_style as {}),
 				...style,
+				...(_style as {}),
 			}}
 		>
 			{children}

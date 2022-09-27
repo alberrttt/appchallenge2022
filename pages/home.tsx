@@ -2,7 +2,7 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
 import { Button } from "react-native";
 import {
 	SafeAreaView,
@@ -12,6 +12,7 @@ import { ScreenProps } from "react-native-screens";
 import { NativeStackParams, Stack } from "../App";
 import { StyledText } from "../components/text";
 import { StyledView } from "../components/view";
+import colors from "../src/colors";
 export const HomeScreen = ({
 	navigation,
 }: NativeStackScreenProps<NativeStackParams, "Home">) => {
@@ -21,63 +22,57 @@ export const HomeScreen = ({
 		<StyledView
 			style={{
 				...styles.home,
-				paddingTop: insets.top + 24,
-				paddingHorizontal: 8,
+				paddingTop: insets.top + 96,
+				paddingHorizontal: 32,
 			}}
 		>
 			<StyledText style={styles.title_1}>Welcome, Albert</StyledText>
-			<View
+			<StyledText
 				style={{
 					alignSelf: "flex-start",
-					paddingHorizontal: 8,
 					paddingTop: 8,
 				}}
 			>
-				<StyledText>Your lists:</StyledText>
-
-				<View
-					style={{
-						paddingTop: 8,
-					}}
-				>
+				Your lists
+			</StyledText>
+			<View
+				style={{
+					paddingTop: 12,
+					flex: 1,
+					flexDirection: "column",
+					alignSelf: "flex-start",
+					width: "100%",
+				}}
+			>
+				<View style={{}}>
 					<View
 						style={{
-							padding: 16,
-							backgroundColor: "#0B0B0B",
-							borderRadius: 8,
+							flex: 1,
+							flexDirection: "row",
+
+							width:
+								useWindowDimensions().width < 720
+									? useWindowDimensions().width < 480
+										? "50%"
+										: "75%"
+									: "100%",
+							justifyContent: "space-between",
 						}}
 					>
-						<View
+						<StyledText
 							style={{
-								flexDirection: "column",
+								fontSize: 24,
 							}}
 						>
-							<StyledText
-								style={{
-									fontSize: 24,
-									paddingTop: 4,
-								}}
-							>
-								List One
-							</StyledText>
-							<StyledText
-								style={{
-									paddingVertical: 8,
-								}}
-							>
-								Lorem ipsum dolor sit amet consectetur
-								adipisicing elit. Eos ipsum totam voluptate
-								quidem harum. Quisquam placeat facere fugit
-								quae? Consequatur tempore pariatur magni animi
-								deserunt. Adipisci iure deleniti at sint?
-							</StyledText>
-							<Button
-								title="Go to list"
-								onPress={() => {
-									navigation.push("List");
-								}}
-							/>
-						</View>
+							My funny list
+						</StyledText>
+						<StyledText
+							style={{
+								color: `${colors["Sonic Silver"]}`,
+							}}
+						>
+							Created by Albert
+						</StyledText>
 					</View>
 				</View>
 			</View>
@@ -88,7 +83,6 @@ const styles = StyleSheet.create({
 	title_1: {
 		fontSize: 36,
 		alignSelf: "flex-start",
-		paddingHorizontal: 4,
 	},
 	home: {
 		flexDirection: "column",
