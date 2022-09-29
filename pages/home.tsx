@@ -1,18 +1,28 @@
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import {
+	NativeStackNavigationProp,
+	NativeStackScreenProps,
+} from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
-import { StyleSheet, useWindowDimensions, View } from "react-native";
+import React, { FC, useEffect, useRef } from "react";
+import {
+	Animated,
+	Easing,
+	StyleSheet,
+	useWindowDimensions,
+	View,
+} from "react-native";
 import { Button } from "react-native";
 import {
 	SafeAreaView,
 	useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { ScreenProps } from "react-native-screens";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { NativeStackParams, Stack } from "../App";
 import { StyledText } from "../components/text";
 import { StyledView } from "../components/view";
 import colors from "../src/colors";
+import { TouchableOpacity } from "react-native-gesture-handler";
 export const HomeScreen = ({
 	navigation,
 }: NativeStackScreenProps<NativeStackParams, "Home">) => {
@@ -35,6 +45,7 @@ export const HomeScreen = ({
 			>
 				Your lists
 			</StyledText>
+
 			<View
 				style={{
 					paddingTop: 12,
@@ -44,39 +55,88 @@ export const HomeScreen = ({
 					width: "100%",
 				}}
 			>
-				<View style={{}}>
-					<View
-						style={{
-							flex: 1,
-							flexDirection: "row",
-
-							width:
-								useWindowDimensions().width < 720
-									? useWindowDimensions().width < 480
-										? "50%"
-										: "75%"
-									: "100%",
-							justifyContent: "space-between",
-						}}
-					>
-						<StyledText
-							style={{
-								fontSize: 24,
-							}}
-						>
-							My funny list
-						</StyledText>
-						<StyledText
-							style={{
-								color: `${colors["Sonic Silver"]}`,
-							}}
-						>
-							Created by Albert
-						</StyledText>
-					</View>
+				<View
+					style={{
+						flex: 1,
+						flexDirection: "column",
+					}}
+				>
+					<ListButton navigation={navigation} />
+					<ListButton navigation={navigation} />
+					<ListButton navigation={navigation} />
 				</View>
 			</View>
 		</StyledView>
+	);
+};
+export const ListButton: FC<{
+	navigation: NativeStackNavigationProp<NativeStackParams, "Home", undefined>;
+}> = ({ navigation }) => {
+	const intoAnim = useRef(new Animated.Value(200)).current;
+	const navi = useNavigation();
+	useEffect(() => {
+		navigation.addListener("focus", () => {
+			console.log("AHA");
+			intoAnim.setValue(200);
+			Animated.timing(intoAnim, {
+				toValue: 0,
+				duration: 1000,
+				useNativeDriver: false,
+				easing: Easing.cubic(),
+			}).start();
+		});
+	}, []);
+	return (
+		<Animated.View
+			style={{
+				marginTop: intoAnim,
+				opacity: intoAnim.interpolate({
+					inputRange: [0, 150],
+					outputRange: [1, 0],
+				}),
+			}}
+		>
+			<View
+				style={{
+					marginTop: 8,
+					padding: 12,
+					borderRadius: 4,
+					backgroundColor: colors.Jet,
+					flexDirection: "row",
+					justifyContent: "space-between",
+				}}
+			>
+				<View
+					style={{
+						flexDirection: "column",
+					}}
+				>
+					<StyledText>Taking care of my brother</StyledText>
+
+					<StyledText
+						style={{
+							color: `${colors["Sonic Silver"]}`,
+						}}
+					>
+						Created by Albert
+					</StyledText>
+				</View>
+				<View
+					style={{
+						flexDirection: "row",
+						alignSelf: "flex-start",
+					}}
+				>
+					<TouchableOpacity
+						onPress={() => {
+							navigation.push("List");
+						}}
+					>
+						<Ionicons name="open" color={"white"} size={16} />
+					</TouchableOpacity>
+				</View>
+			</View>
+		</Animated.View>
 	);
 };
 const styles = StyleSheet.create({
