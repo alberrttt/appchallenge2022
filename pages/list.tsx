@@ -3,11 +3,16 @@ import { StyledView } from "../components/view";
 import { StyledText } from "../components/text";
 import { TouchableOpacity, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NativeStackParams } from "../App";
+import { NativeStackParams } from "../src/types";
+import colors from "../src/colors";
+import { FC } from "react";
+import { Ionicons } from "@expo/vector-icons";
 export function List({
 	navigation,
-}: NativeStackScreenProps<NativeStackParams, "Home">) {
+	route,
+}: NativeStackScreenProps<NativeStackParams, "List">) {
 	const insets = useSafeAreaInsets();
+	const { owner_name, title } = route.params;
 	return (
 		<StyledView
 			style={{
@@ -20,7 +25,12 @@ export function List({
 					navigation.goBack();
 				}}
 			>
-				<View>
+				<View
+					style={{
+						flexDirection: "row",
+					}}
+				>
+					<Ionicons name="arrow-back" color={"white"} size={16} />
 					<StyledText>Back</StyledText>
 				</View>
 			</TouchableOpacity>
@@ -29,14 +39,50 @@ export function List({
 					fontSize: 36,
 				}}
 			>
-				Your list
+				{title}
 			</StyledText>
+			<StyledText>2 Participants</StyledText>
 			<StyledView
 				style={{
+					marginTop: 8,
 					flex: 1,
-					flexDirection: "row",
+					padding: 2,
+					flexDirection: "column",
 				}}
-			></StyledView>
+			>
+				<Participant />
+				<Participant date="1 Week: Sept 7 - Aug 14" name="Vincent" />
+			</StyledView>
 		</StyledView>
 	);
 }
+const Participant: FC<{
+	date?: string;
+	name?: string;
+}> = ({ date = "1 Week: Sept 30 - Aug 7", name = "Albert" }) => (
+	<View
+		style={{
+			marginTop: 4,
+			width: "100%",
+		}}
+	>
+		<View
+			style={{
+				justifyContent: "space-between",
+				flexDirection: "row",
+				borderRadius: 8,
+				padding: 8,
+				backgroundColor: colors["Eerie Black"],
+			}}
+		>
+			<StyledText>{name}</StyledText>
+			<StyledText
+				style={{
+					color: colors["Davys Grey"],
+				}}
+			>
+				{date}
+			</StyledText>
+		</View>
+	</View>
+);

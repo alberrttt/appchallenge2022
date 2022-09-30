@@ -8,11 +8,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import colors from "./src/colors";
 import { createStackNavigator } from "@react-navigation/stack";
 import { List } from "./pages/list";
+import { NativeStackParams } from "./src/types";
 
-export type NativeStackParams = {
-	Home: undefined;
-	List: undefined;
-};
 export const Stack = createStackNavigator<NativeStackParams>();
 
 export default function App() {
@@ -26,6 +23,7 @@ export default function App() {
 					}}
 				>
 					<Stack.Screen name="Home" component={HomeScreen} />
+
 					<Stack.Screen name={"List"} component={List} />
 				</Stack.Navigator>
 			</NavigationContainer>

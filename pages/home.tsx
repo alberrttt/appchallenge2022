@@ -18,11 +18,12 @@ import {
 	useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { NativeStackParams, Stack } from "../App";
+import { Stack } from "../App";
 import { StyledText } from "../components/text";
 import { StyledView } from "../components/view";
 import colors from "../src/colors";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { NativeStackParams } from "../src/types";
 export const HomeScreen = ({
 	navigation,
 }: NativeStackScreenProps<NativeStackParams, "Home">) => {
@@ -61,9 +62,16 @@ export const HomeScreen = ({
 						flexDirection: "column",
 					}}
 				>
-					<ListButton navigation={navigation} />
-					<ListButton navigation={navigation} />
-					<ListButton navigation={navigation} />
+					<ListButton
+						navigation={navigation}
+						title={"Walking the dog"}
+						index={1}
+					/>
+					<ListButton
+						navigation={navigation}
+						title={"Watering the plants"}
+						index={2}
+					/>
 				</View>
 			</View>
 		</StyledView>
@@ -71,25 +79,33 @@ export const HomeScreen = ({
 };
 export const ListButton: FC<{
 	navigation: NativeStackNavigationProp<NativeStackParams, "Home", undefined>;
-}> = ({ navigation }) => {
-	const intoAnim = useRef(new Animated.Value(200)).current;
+	index: number;
+	owner_name?: string;
+	title?: string;
+}> = ({
+	navigation,
+	index,
+	owner_name = "Albert",
+	title = "Taking care of my brother",
+}) => {
+	const intoAnim = useRef(new Animated.Value(15 + 25 * index)).current;
 	const navi = useNavigation();
+
 	useEffect(() => {
 		navigation.addListener("focus", () => {
-			console.log("AHA");
-			intoAnim.setValue(200);
+			intoAnim.setValue(15 + 25 * index);
 			Animated.timing(intoAnim, {
 				toValue: 0,
-				duration: 1000,
+				duration: 500,
 				useNativeDriver: false,
-				easing: Easing.cubic(),
+				easing: Easing.bounce,
 			}).start();
 		});
 	}, []);
 	return (
 		<Animated.View
 			style={{
-				marginTop: intoAnim,
+				top: intoAnim,
 				opacity: intoAnim.interpolate({
 					inputRange: [0, 150],
 					outputRange: [1, 0],
@@ -111,14 +127,21 @@ export const ListButton: FC<{
 						flexDirection: "column",
 					}}
 				>
-					<StyledText>Taking care of my brother</StyledText>
+					<StyledText
+						style={{
+							fontSize: 16,
+							fontWeight: "bold",
+						}}
+					>
+						{title}
+					</StyledText>
 
 					<StyledText
 						style={{
 							color: `${colors["Sonic Silver"]}`,
 						}}
 					>
-						Created by Albert
+						Created by {owner_name}
 					</StyledText>
 				</View>
 				<View
@@ -129,7 +152,10 @@ export const ListButton: FC<{
 				>
 					<TouchableOpacity
 						onPress={() => {
-							navigation.push("List");
+							navigation.push("List", {
+								owner_name: owner_name,
+								title,
+							});
 						}}
 					>
 						<Ionicons name="open" color={"white"} size={16} />
