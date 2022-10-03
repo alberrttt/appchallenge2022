@@ -1,18 +1,21 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyledView } from "../components/view";
 import { StyledText } from "../components/text";
-import { TouchableOpacity, View } from "react-native";
+import { Button, TouchableOpacity, View, ImageBackground } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NativeStackParams } from "../src/types";
 import colors from "../src/colors";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { ScrollView } from "react-native-gesture-handler";
+import { random_images } from "../src/images";
 export function List({
 	navigation,
 	route,
 }: NativeStackScreenProps<NativeStackParams, "List">) {
 	const insets = useSafeAreaInsets();
 	const { owner_name, title } = route.params;
+	const a = useMemo(() => random_images(), []);
 	return (
 		<StyledView
 			style={{
@@ -42,17 +45,50 @@ export function List({
 				{title}
 			</StyledText>
 			<StyledText>2 Participants</StyledText>
-			<StyledView
+			<ImageBackground
+				source={a}
 				style={{
-					marginTop: 8,
-					flex: 1,
+					marginVertical: 8,
+					flex: 1 / 5,
+					marginHorizontal: -16,
+				}}
+			></ImageBackground>
+			<View
+				style={{
 					padding: 2,
 					flexDirection: "column",
 				}}
 			>
 				<Participant />
 				<Participant date="1 Week: Sept 7 - Aug 14" name="Vincent" />
-			</StyledView>
+			</View>
+			<View
+				style={{
+					padding: 4,
+					alignContent: "flex-start",
+				}}
+			>
+				<View>
+					<View
+						style={{
+							justifyContent: "space-between",
+							flexDirection: "row",
+							backgroundColor: colors.Jet,
+							padding: 8,
+							borderRadius: 8,
+							alignSelf: "flex-start",
+						}}
+					>
+						<StyledText
+							style={{
+								fontSize: 16,
+							}}
+						>
+							Assign self
+						</StyledText>
+					</View>
+				</View>
+			</View>
 		</StyledView>
 	);
 }
@@ -62,7 +98,7 @@ const Participant: FC<{
 }> = ({ date = "1 Week: Sept 30 - Aug 7", name = "Albert" }) => (
 	<View
 		style={{
-			marginTop: 4,
+			marginTop: 8,
 			width: "100%",
 		}}
 	>

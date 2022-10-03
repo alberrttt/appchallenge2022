@@ -11,6 +11,7 @@ import {
 	StyleSheet,
 	useWindowDimensions,
 	View,
+	Image,
 } from "react-native";
 import { Button } from "react-native";
 import {
@@ -22,8 +23,9 @@ import { Stack } from "../App";
 import { StyledText } from "../components/text";
 import { StyledView } from "../components/view";
 import colors from "../src/colors";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { NativeStackParams } from "../src/types";
+import { random_images } from "../src/images";
 export const HomeScreen = ({
 	navigation,
 }: NativeStackScreenProps<NativeStackParams, "Home">) => {
@@ -44,36 +46,32 @@ export const HomeScreen = ({
 					paddingTop: 8,
 				}}
 			>
-				Your lists
+				You are participating in:
 			</StyledText>
 
 			<View
 				style={{
-					paddingTop: 12,
-					flex: 1,
+					paddingVertical: 12,
 					flexDirection: "column",
 					alignSelf: "flex-start",
 					width: "100%",
 				}}
 			>
-				<View
-					style={{
-						flex: 1,
-						flexDirection: "column",
-					}}
-				>
-					<ListButton
-						navigation={navigation}
-						title={"Walking the dog"}
-						index={1}
-					/>
-					<ListButton
-						navigation={navigation}
-						title={"Watering the plants"}
-						index={2}
-					/>
-				</View>
+				<ListButton
+					navigation={navigation}
+					title={"Walking the dog"}
+					index={1}
+				/>
+				<ListButton navigation={navigation} index={1} />
 			</View>
+			<StyledText
+				style={{
+					fontSize: 36,
+					alignSelf: "flex-start",
+				}}
+			>
+				Invitations
+			</StyledText>
 		</StyledView>
 	);
 };
@@ -115,11 +113,11 @@ export const ListButton: FC<{
 			<View
 				style={{
 					marginTop: 8,
-					padding: 12,
 					borderRadius: 4,
 					backgroundColor: colors.Jet,
 					flexDirection: "row",
 					justifyContent: "space-between",
+					padding: 12,
 				}}
 			>
 				<View
@@ -144,6 +142,7 @@ export const ListButton: FC<{
 						Created by {owner_name}
 					</StyledText>
 				</View>
+
 				<View
 					style={{
 						flexDirection: "row",
