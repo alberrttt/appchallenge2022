@@ -7,4 +7,6 @@ export default {
 	"Davys Grey": "#575757",
 	"Dim Gray": "#696969",
 	"Sonic Silver": "#7a7a7a",
+	"UFO Green": "#42eb7d",
+	"Carmine Pink": "#eb4242",
 } as const;
