@@ -4,7 +4,7 @@ import {
 	NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import {
 	Animated,
 	Easing,
@@ -130,6 +130,7 @@ export const InvitationButton: FC<{
 					flexDirection: "row",
 					justifyContent: "space-between",
 					padding: 12,
+					width: "100%",
 				}}
 			>
 				<View
@@ -173,30 +174,31 @@ export const InvitationButton: FC<{
 				<View
 					style={{
 						marginTop: 4,
+						flexGrow: 1,
 						flexDirection: "row",
-						justifyContent: "space-between",
 					}}
 				>
 					<View
 						style={{
 							padding: 4,
 							borderRadius: 4,
-							width: "50%",
-							marginRight: 2,
+							marginRight: 4,
+							alignItems: "center",
 							backgroundColor: colors["Carmine Pink"],
 						}}
 					>
-						<StyledText>Hi</StyledText>
+						<AntDesign name="close" />
 					</View>
 					<View
 						style={{
 							padding: 4,
-							width: "50%",
 							borderRadius: 4,
-							backgroundColor: colors["Carmine Pink"],
+							backgroundColor: colors["UFO Green"],
+							flexDirection: "row",
+							alignItems: "center",
 						}}
 					>
-						<StyledText>Hi</StyledText>
+						<AntDesign name="check" />
 					</View>
 				</View>
 			) : null}
@@ -216,7 +218,7 @@ export const ListButton: FC<{
 }) => {
 	const intoAnim = useRef(new Animated.Value(15 + 25 * index)).current;
 	const navi = useNavigation();
-
+	const image = useMemo(() => random_images(), []);
 	useEffect(() => {
 		navigation.addListener("focus", () => {
 			intoAnim.setValue(15 + 25 * index);
@@ -236,6 +238,7 @@ export const ListButton: FC<{
 					inputRange: [0, 150],
 					outputRange: [1, 0],
 				}),
+				flexDirection: "column",
 			}}
 		>
 			<View
@@ -246,6 +249,8 @@ export const ListButton: FC<{
 					flexDirection: "row",
 					justifyContent: "space-between",
 					padding: 12,
+					borderBottomStartRadius: 0,
+					borderBottomEndRadius: 0,
 				}}
 			>
 				<View
@@ -288,6 +293,21 @@ export const ListButton: FC<{
 						<Ionicons name="open" color={"white"} size={16} />
 					</TouchableOpacity>
 				</View>
+			</View>
+			<View
+				style={{
+					flexGrow: 1,
+				}}
+			>
+				<Image
+					source={image}
+					style={{
+						height: 160,
+						width: "100%",
+						borderBottomLeftRadius: 8,
+						borderBottomRightRadius: 8,
+					}}
+				/>
 			</View>
 		</Animated.View>
 	);

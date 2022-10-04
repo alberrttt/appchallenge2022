@@ -25,7 +25,7 @@ export function List({
 		>
 			<TouchableOpacity
 				onPress={() => {
-					navigation.goBack();
+					navigation.pop();
 				}}
 			>
 				<View
@@ -98,7 +98,7 @@ const Participant: FC<{
 }> = ({ date = "1 Week: Sept 30 - Aug 7", name = "Albert" }) => (
 	<View
 		style={{
-			marginTop: 8,
+			marginTop: 6,
 			width: "100%",
 		}}
 	>
