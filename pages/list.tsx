@@ -1,13 +1,18 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyledView } from "../components/view";
 import { StyledText } from "../components/text";
-import { Button, TouchableOpacity, View, ImageBackground } from "react-native";
+import {
+	Button,
+	TouchableOpacity,
+	View,
+	ImageBackground,
+	ScrollView,
+} from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NativeStackParams } from "../src/types";
 import colors from "../src/colors";
 import { FC, useMemo } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { ScrollView } from "react-native-gesture-handler";
 import { random_images } from "../src/images";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
@@ -21,6 +26,7 @@ export function List({
 	return (
 		<StyledView
 			style={{
+				flex: 1,
 				paddingTop: insets.top + 12,
 				paddingHorizontal: 12,
 			}}
@@ -50,21 +56,38 @@ export function List({
 
 			<View
 				style={{
-					marginTop: 8,
-					padding: 2,
-					flexDirection: "column",
+					maxHeight: 156,
+					flex: 1,
 				}}
 			>
-				<Participant />
-				<Participant date="1 Week: Sept 7 - Aug 14" name="Vincent" />
+				<ScrollView
+					style={{
+						marginTop: 8,
+						flexDirection: "column",
+						flexGrow: 1,
+						flex: 1,
+					}}
+					snapToInterval={37}
+					persistentScrollbar={true}
+					showsVerticalScrollIndicator={true}
+				>
+					<Participant />
+					<Participant
+						date="1 Week: Sept 7 - Aug 14"
+						name="Vincent"
+					/>
+				</ScrollView>
 			</View>
 			<View
 				style={{
-					padding: 4,
 					alignContent: "flex-start",
 				}}
 			>
-				<View>
+				<View
+					style={{
+						marginTop: 4,
+					}}
+				>
 					<View
 						style={{
 							justifyContent: "space-between",

@@ -1,4 +1,8 @@
-import { NavigationProp, useNavigation } from "@react-navigation/native";
+import {
+	NavigationProp,
+	PrivateValueStore,
+	useNavigation,
+} from "@react-navigation/native";
 import {
 	NativeStackNavigationProp,
 	NativeStackScreenProps,
@@ -101,7 +105,6 @@ export const InvitationButton: FC<{
 }) => {
 	const intoAnim = useRef(new Animated.Value(15 + 25 * index)).current;
 	const navi = useNavigation();
-	const test = useRef(new Animated.Value(0)).current;
 	useEffect(() => {
 		navigation.addListener("focus", () => {
 			intoAnim.setValue(15 + 25 * index);
@@ -114,7 +117,6 @@ export const InvitationButton: FC<{
 		});
 	}, []);
 	const [options, setOptions] = useState(false);
-	console.log(test);
 	return (
 		<Animated.View
 			style={{
@@ -161,67 +163,44 @@ export const InvitationButton: FC<{
 
 				<View
 					style={{
-						flexDirection: "row",
+						flexDirection: "column",
+						alignItems: "flex-end",
 					}}
 				>
 					<Pressable
 						onPress={() => {
-							test.setValue(50);
-							Animated.timing(test, {
-								toValue: 0,
-								duration: 100,
-								easing: Easing.linear,
-								useNativeDriver: false,
-							}).start();
 							setOptions(!options);
 						}}
 					>
 						<AntDesign name="ellipsis1" color={"white"} size={16} />
 					</Pressable>
+					{options ? <Option option={options} /> : undefined}
 				</View>
 			</View>
-			{options ? (
-				<Animated.View
-					style={{
-						left: test,
-						opacity: test.interpolate({
-							inputRange: [0, 50],
-							outputRange: [1, 0],
-						}),
-					}}
-				>
-					<View
-						style={{
-							marginTop: 4,
-							flexGrow: 1,
-							flexDirection: "row",
-						}}
-					>
-						<View
-							style={{
-								padding: 4,
-								borderRadius: 4,
-								marginRight: 4,
-								alignItems: "center",
-								backgroundColor: colors["Carmine Pink"],
-							}}
-						>
-							<AntDesign name="close" />
-						</View>
-						<View
-							style={{
-								padding: 4,
-								borderRadius: 4,
-								backgroundColor: colors["UFO Green"],
-								flexDirection: "row",
-								alignItems: "center",
-							}}
-						>
-							<AntDesign name="check" />
-						</View>
-					</View>
-				</Animated.View>
-			) : null}
+		</Animated.View>
+	);
+};
+export const Option = ({ option }: { option: boolean }) => {
+	const animated = useRef(new Animated.Value(50)).current;
+	useEffect(() => {
+		animated.setValue(0);
+		Animated.timing(animated, {
+			toValue: 0,
+			duration: 500,
+			useNativeDriver: true,
+		}).start();
+	}, [option]);
+	return (
+		<Animated.View
+			style={{
+				flexDirection: "row",
+			}}
+		>
+			<View>
+				<AntDesign name="close" size={18} color={"white"} />
+
+				<AntDesign name="check" size={18} color={"white"} />
+			</View>
 		</Animated.View>
 	);
 };
@@ -263,7 +242,7 @@ export const ListButton: FC<{
 		>
 			<LinearGradient
 				style={{
-					borderRadius: 8,
+					borderRadius: 12,
 					backgroundColor: colors.Jet,
 					flexDirection: "row",
 					justifyContent: "space-between",
@@ -271,7 +250,7 @@ export const ListButton: FC<{
 					borderBottomStartRadius: 0,
 					borderBottomEndRadius: 0,
 				}}
-				colors={["#90B573", "#73B59D"]}
+				colors={["#90B573", "#73B573"]}
 				start={{
 					x: 0.4,
 					y: 0.2,
@@ -325,8 +304,8 @@ export const ListButton: FC<{
 					style={{
 						height: 160,
 						width: "100%",
-						borderBottomLeftRadius: 8,
-						borderBottomRightRadius: 8,
+						borderBottomLeftRadius: 12,
+						borderBottomRightRadius: 12,
 					}}
 				/>
 			</View>
