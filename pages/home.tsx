@@ -12,6 +12,7 @@ import {
 	useWindowDimensions,
 	View,
 	Image,
+	Text,
 	Pressable,
 } from "react-native";
 import { Button } from "react-native";
@@ -28,6 +29,7 @@ import colors from "../src/colors";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { NativeStackParams } from "../src/types";
 import { random_images } from "../src/images";
+import { LinearGradient } from "expo-linear-gradient";
 export const HomeScreen = ({
 	navigation,
 }: NativeStackScreenProps<NativeStackParams, "Home">) => {
@@ -99,7 +101,7 @@ export const InvitationButton: FC<{
 }) => {
 	const intoAnim = useRef(new Animated.Value(15 + 25 * index)).current;
 	const navi = useNavigation();
-
+	const test = useRef(new Animated.Value(0)).current;
 	useEffect(() => {
 		navigation.addListener("focus", () => {
 			intoAnim.setValue(15 + 25 * index);
@@ -112,6 +114,7 @@ export const InvitationButton: FC<{
 		});
 	}, []);
 	const [options, setOptions] = useState(false);
+	console.log(test);
 	return (
 		<Animated.View
 			style={{
@@ -163,6 +166,13 @@ export const InvitationButton: FC<{
 				>
 					<Pressable
 						onPress={() => {
+							test.setValue(50);
+							Animated.timing(test, {
+								toValue: 0,
+								duration: 100,
+								easing: Easing.linear,
+								useNativeDriver: false,
+							}).start();
 							setOptions(!options);
 						}}
 					>
@@ -171,36 +181,46 @@ export const InvitationButton: FC<{
 				</View>
 			</View>
 			{options ? (
-				<View
+				<Animated.View
 					style={{
-						marginTop: 4,
-						flexGrow: 1,
-						flexDirection: "row",
+						left: test,
+						opacity: test.interpolate({
+							inputRange: [0, 50],
+							outputRange: [1, 0],
+						}),
 					}}
 				>
 					<View
 						style={{
-							padding: 4,
-							borderRadius: 4,
-							marginRight: 4,
-							alignItems: "center",
-							backgroundColor: colors["Carmine Pink"],
-						}}
-					>
-						<AntDesign name="close" />
-					</View>
-					<View
-						style={{
-							padding: 4,
-							borderRadius: 4,
-							backgroundColor: colors["UFO Green"],
+							marginTop: 4,
+							flexGrow: 1,
 							flexDirection: "row",
-							alignItems: "center",
 						}}
 					>
-						<AntDesign name="check" />
+						<View
+							style={{
+								padding: 4,
+								borderRadius: 4,
+								marginRight: 4,
+								alignItems: "center",
+								backgroundColor: colors["Carmine Pink"],
+							}}
+						>
+							<AntDesign name="close" />
+						</View>
+						<View
+							style={{
+								padding: 4,
+								borderRadius: 4,
+								backgroundColor: colors["UFO Green"],
+								flexDirection: "row",
+								alignItems: "center",
+							}}
+						>
+							<AntDesign name="check" />
+						</View>
 					</View>
-				</View>
+				</Animated.View>
 			) : null}
 		</Animated.View>
 	);
@@ -241,16 +261,20 @@ export const ListButton: FC<{
 				flexDirection: "column",
 			}}
 		>
-			<View
+			<LinearGradient
 				style={{
-					marginTop: 8,
-					borderRadius: 4,
+					borderRadius: 8,
 					backgroundColor: colors.Jet,
 					flexDirection: "row",
 					justifyContent: "space-between",
 					padding: 12,
 					borderBottomStartRadius: 0,
 					borderBottomEndRadius: 0,
+				}}
+				colors={["#90B573", "#73B59D"]}
+				start={{
+					x: 0.4,
+					y: 0.2,
 				}}
 			>
 				<View
@@ -260,20 +284,16 @@ export const ListButton: FC<{
 				>
 					<StyledText
 						style={{
-							fontSize: 16,
+							fontSize: 28,
+							marginTop: -2,
 							fontWeight: "bold",
+							alignItems: "flex-end",
 						}}
 					>
 						{title}
 					</StyledText>
 
-					<StyledText
-						style={{
-							color: `${colors["Sonic Silver"]}`,
-						}}
-					>
-						Created by {owner_name}
-					</StyledText>
+					<StyledText style={{}}>Created by {owner_name}</StyledText>
 				</View>
 
 				<View
@@ -293,7 +313,8 @@ export const ListButton: FC<{
 						<Ionicons name="open" color={"white"} size={16} />
 					</TouchableOpacity>
 				</View>
-			</View>
+			</LinearGradient>
+
 			<View
 				style={{
 					flexGrow: 1,

@@ -9,6 +9,8 @@ import { FC, useMemo } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { random_images } from "../src/images";
+import React from "react";
+import { LinearGradient } from "expo-linear-gradient";
 export function List({
 	navigation,
 	route,
@@ -45,16 +47,10 @@ export function List({
 				{title}
 			</StyledText>
 			<StyledText>2 Participants</StyledText>
-			<ImageBackground
-				source={a}
-				style={{
-					marginVertical: 8,
-					flex: 1 / 5,
-					marginHorizontal: -16,
-				}}
-			></ImageBackground>
+
 			<View
 				style={{
+					marginTop: 8,
 					padding: 2,
 					flexDirection: "column",
 				}}
@@ -108,10 +104,18 @@ const Participant: FC<{
 				flexDirection: "row",
 				borderRadius: 8,
 				padding: 8,
+				alignItems: "center",
 				backgroundColor: colors["Eerie Black"],
 			}}
 		>
-			<StyledText>{name}</StyledText>
+			<StyledText
+				style={{
+					marginLeft: 4,
+					fontSize: 18,
+				}}
+			>
+				{name}
+			</StyledText>
 			<StyledText
 				style={{
 					color: colors["Davys Grey"],
