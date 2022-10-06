@@ -16,12 +16,20 @@ import { Ionicons } from "@expo/vector-icons";
 import { random_images } from "../src/images";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import { List as List_, ParticipationList } from "../src/client";
 export function List({
 	navigation,
 	route,
 }: NativeStackScreenProps<NativeStackParams, "List">) {
 	const insets = useSafeAreaInsets();
-	const { owner_name, title } = route.params;
+	const { list_id } = route.params;
+	const { name, owner_name } = Object.assign(
+		ParticipationList.lists.get(list_id)! || {},
+		{
+			name: "awdawd",
+			owner_name: "awda",
+		}
+	)! as List_;
 	const a = useMemo(() => random_images(), []);
 	return (
 		<StyledView
@@ -50,7 +58,7 @@ export function List({
 					fontSize: 36,
 				}}
 			>
-				{title}
+				{name}
 			</StyledText>
 			<StyledText>2 Participants</StyledText>
 

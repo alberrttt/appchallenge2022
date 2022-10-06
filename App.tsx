@@ -9,14 +9,19 @@ import colors from "./src/colors";
 import { createStackNavigator } from "@react-navigation/stack";
 import { List } from "./pages/list";
 import { NativeStackParams } from "./src/types";
-import React from "react";
+import React, { useMemo } from "react";
+import { AppContext, Client } from "./src/client";
 
 export const Stack = createStackNavigator<NativeStackParams>();
-export const AppContext = React.createContext({});
+
 export default function App() {
-	console.log(useColorScheme());
+	const client = useMemo(() => new Client(), []);
 	return (
-		<AppContext.Provider value={{}}>
+		<AppContext.Provider
+			value={{
+				client,
+			}}
+		>
 			<SafeAreaProvider>
 				<NavigationContainer>
 					<Stack.Navigator

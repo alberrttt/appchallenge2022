@@ -8,7 +8,14 @@ import {
 	NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+	FC,
+	useContext,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import {
 	Animated,
 	Easing,
@@ -26,7 +33,6 @@ import {
 } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { Stack } from "../App";
 import { StyledText } from "../components/text";
 import { StyledView } from "../components/view";
 import colors from "../src/colors";
@@ -34,11 +40,13 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { NativeStackParams } from "../src/types";
 import { random_images } from "../src/images";
 import { LinearGradient } from "expo-linear-gradient";
+import { AppContext, List } from "../src/client";
 export const HomeScreen = ({
 	navigation,
 }: NativeStackScreenProps<NativeStackParams, "Home">) => {
 	const insets = useSafeAreaInsets();
 	const navigator = useNavigation();
+	const context = useContext(AppContext);
 	return (
 		<StyledView
 			style={{
@@ -65,11 +73,24 @@ export const HomeScreen = ({
 					width: "100%",
 				}}
 			>
-				<ListButton
-					navigation={navigation}
-					index={2}
-					title={"Groceries"}
-				/>
+				<ScrollView
+					style={{
+						maxHeight: 256,
+						borderRadius: 8,
+					}}
+				>
+					{context.client.fetch_lists().map((list, key) => {
+						console.log(list, key);
+						return (
+							<ListButton
+								navigation={navigation}
+								index={key}
+								list={list}
+								key={key}
+							/>
+						);
+					})}
+				</ScrollView>
 			</View>
 			<StyledText
 				style={{
@@ -207,17 +228,12 @@ export const Option = ({ option }: { option: boolean }) => {
 export const ListButton: FC<{
 	navigation: NativeStackNavigationProp<NativeStackParams, "Home", undefined>;
 	index: number;
-	owner_name?: string;
-	title?: string;
-}> = ({
-	navigation,
-	index,
-	owner_name = "Albert",
-	title = "Taking care of my brother",
-}) => {
+	list: List;
+}> = ({ navigation, index, list }) => {
 	const intoAnim = useRef(new Animated.Value(15 + 25 * index)).current;
 	const navi = useNavigation();
 	const image = useMemo(() => random_images(), []);
+	const { name, owner_name } = list;
 	useEffect(() => {
 		navigation.addListener("focus", () => {
 			intoAnim.setValue(15 + 25 * index);
@@ -232,6 +248,7 @@ export const ListButton: FC<{
 	return (
 		<Animated.View
 			style={{
+				marginTop: 16 * (index / index || index),
 				top: intoAnim,
 				opacity: intoAnim.interpolate({
 					inputRange: [0, 150],
@@ -269,7 +286,7 @@ export const ListButton: FC<{
 							alignItems: "flex-end",
 						}}
 					>
-						{title}
+						{name}
 					</StyledText>
 
 					<StyledText style={{}}>Created by {owner_name}</StyledText>
@@ -284,8 +301,7 @@ export const ListButton: FC<{
 					<TouchableOpacity
 						onPress={() => {
 							navigation.push("List", {
-								owner_name: owner_name,
-								title,
+								list_id: list.id,
 							});
 						}}
 					>
@@ -302,7 +318,8 @@ export const ListButton: FC<{
 				<Image
 					source={image}
 					style={{
-						height: 160,
+						height: 120,
+
 						width: "100%",
 						borderBottomLeftRadius: 12,
 						borderBottomRightRadius: 12,
