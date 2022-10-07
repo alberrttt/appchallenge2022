@@ -1,4 +1,5 @@
 import React from "react";
+import { colors500 } from "./colors";
 
 export class Client {
 	static current_client: Client;
@@ -11,35 +12,64 @@ export class Client {
 		return ParticipationList.fetch_all();
 	}
 }
+export interface ListAppearance {
+	color: string;
+}
 export interface EnrolledList {
 	id: string;
 	name: string;
 	owner_name: string;
+	appearance: ListAppearance;
 }
 export interface Context {
 	client: Client;
 }
 export const AppContext = React.createContext<Context>({} as never);
 export type List = EnrolledList;
-export class ParticipationList {
-	static lists = new Map<string, List>();
-	static fetch_all() {
-		const enrolled_lists: EnrolledList[] = [
+function appearance() {
+	return (merge?: Partial<ListAppearance>) => {
+		return Object.assign<ListAppearance, any>(
+			{
+				color: colors500.blue,
+			},
+			merge ?? {}
+		);
+	};
+}
+function list() {
+	return (merge?: Partial<EnrolledList>) => {
+		return Object.assign(
 			{
 				id: "0",
 				owner_name: "Kimberly",
 				name: "Aunt Vivan",
+				appearance: appearance()({}),
 			},
-			{
+			merge ?? {}
+		);
+	};
+}
+export class ParticipationList {
+	static lists = new Map<string, List>();
+	static fetch_all() {
+		const enrolled_lists: EnrolledList[] = [
+			list()(),
+			list()({
 				id: "1",
 				name: "Groceries",
-				owner_name: "Albert",
-			},
-			{
+				owner_name: "Vincent",
+				appearance: appearance()({
+					color: colors500.green,
+				}),
+			}),
+			list()({
 				id: "2",
 				name: "Gardening",
 				owner_name: "Test",
-			},
+				appearance: appearance()({
+					color: colors500.yellow,
+				}),
+			}),
 		];
 
 		return enrolled_lists;

@@ -47,6 +47,10 @@ export const HomeScreen = ({
 	const insets = useSafeAreaInsets();
 	const navigator = useNavigation();
 	const context = useContext(AppContext);
+	const ref = useRef<ScrollView>(null);
+	useEffect(() => {
+		ref.current!.flashScrollIndicators();
+	}, [ref]);
 	return (
 		<StyledView
 			style={{
@@ -56,27 +60,37 @@ export const HomeScreen = ({
 			}}
 		>
 			<StyledText style={styles.title_1}>Welcome, Albert</StyledText>
-			<StyledText
+			<View
 				style={{
-					alignSelf: "flex-start",
 					paddingTop: 8,
+
+					justifyContent: "space-between",
+					alignItems: "flex-start",
+					flexDirection: "row",
+					width: "100%",
 				}}
 			>
-				You are participating in:
-			</StyledText>
+				<StyledText style={{}}>You are participating in:</StyledText>
+				<AntDesign name="pluscircle" color={"white"} size={24} />
+			</View>
 
 			<View
 				style={{
-					paddingVertical: 12,
+					paddingVertical: 16,
 					flexDirection: "column",
 					alignSelf: "flex-start",
 					width: "100%",
 				}}
 			>
 				<ScrollView
+					ref={ref}
 					style={{
 						maxHeight: 256,
 						borderRadius: 8,
+					}}
+					scrollIndicatorInsets={{
+						left: 4,
+						right: 4,
 					}}
 				>
 					{context.client.fetch_lists().map((list, key) => {
@@ -248,7 +262,7 @@ export const ListButton: FC<{
 	return (
 		<Animated.View
 			style={{
-				marginTop: 16 * (index / index || index),
+				marginTop: 12 * (index / index || index),
 				top: intoAnim,
 				opacity: intoAnim.interpolate({
 					inputRange: [0, 150],
@@ -267,7 +281,7 @@ export const ListButton: FC<{
 					borderBottomStartRadius: 0,
 					borderBottomEndRadius: 0,
 				}}
-				colors={["#90B573", "#73B573"]}
+				colors={[list.appearance.color, list.appearance.color]}
 				start={{
 					x: 0.4,
 					y: 0.2,
