@@ -50,7 +50,7 @@ function list() {
 	};
 }
 export class ParticipationList {
-	static lists = new Map<string, List>();
+	static lists = new Map<string, EnrolledList>();
 	static fetch_all() {
 		const enrolled_lists: EnrolledList[] = [
 			list()(),
@@ -71,7 +71,9 @@ export class ParticipationList {
 				}),
 			}),
 		];
-
+		enrolled_lists.forEach((v, key) => {
+			this.lists.set(v.id, v);
+		});
 		return enrolled_lists;
 	}
 }

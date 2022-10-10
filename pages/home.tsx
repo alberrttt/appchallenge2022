@@ -40,7 +40,7 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { NativeStackParams } from "../src/types";
 import { random_images } from "../src/images";
 import { LinearGradient } from "expo-linear-gradient";
-import { AppContext, List } from "../src/client";
+import { AppContext, List, ParticipationList } from "../src/client";
 export const HomeScreen = ({
 	navigation,
 }: NativeStackScreenProps<NativeStackParams, "Home">) => {
@@ -57,12 +57,13 @@ export const HomeScreen = ({
 				...styles.home,
 				paddingTop: insets.top + 96,
 				paddingHorizontal: 32,
+				flex: 1,
 			}}
 		>
 			<StyledText style={styles.title_1}>Welcome, Albert</StyledText>
 			<View
 				style={{
-					paddingTop: 8,
+					paddingTop: 4,
 
 					justifyContent: "space-between",
 					alignItems: "flex-start",
@@ -71,12 +72,23 @@ export const HomeScreen = ({
 				}}
 			>
 				<StyledText style={{}}>You are participating in:</StyledText>
-				<AntDesign name="pluscircle" color={"white"} size={24} />
+				<TouchableOpacity
+					onPress={() => {
+						navigation.push("CreateList");
+					}}
+				>
+					<AntDesign
+						name="pluscircle"
+						color={"white"}
+						size={32}
+						style={{}}
+					/>
+				</TouchableOpacity>
 			</View>
 
 			<View
 				style={{
-					paddingVertical: 16,
+					paddingVertical: 8,
 					flexDirection: "column",
 					alignSelf: "flex-start",
 					width: "100%",
@@ -85,7 +97,7 @@ export const HomeScreen = ({
 				<ScrollView
 					ref={ref}
 					style={{
-						maxHeight: 256,
+						maxHeight: 200,
 						borderRadius: 8,
 					}}
 					scrollIndicatorInsets={{
@@ -314,6 +326,7 @@ export const ListButton: FC<{
 				>
 					<TouchableOpacity
 						onPress={() => {
+							ParticipationList.fetch_all();
 							navigation.push("List", {
 								list_id: list.id,
 							});

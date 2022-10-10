@@ -3,4 +3,5 @@ export type NativeStackParams = {
 		list_id: string;
 	};
 	Home: undefined;
+	CreateList: undefined;
 };

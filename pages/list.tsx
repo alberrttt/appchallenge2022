@@ -23,12 +23,14 @@ export function List({
 }: NativeStackScreenProps<NativeStackParams, "List">) {
 	const insets = useSafeAreaInsets();
 	const { list_id } = route.params;
+	console.log(ParticipationList.lists.get(list_id));
+
 	const { name, owner_name } = Object.assign(
-		ParticipationList.lists.get(list_id)! || {},
 		{
 			name: "awdawd",
 			owner_name: "awda",
-		}
+		},
+		ParticipationList.lists.get(list_id)! || {}
 	)! as List_;
 	const a = useMemo(() => random_images(), []);
 	return (
