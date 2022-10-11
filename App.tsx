@@ -11,7 +11,6 @@ import { List } from "./pages/list";
 import { NativeStackParams } from "./src/types";
 import React, { useMemo } from "react";
 import { AppContext, Client } from "./src/client";
-import { CreateList } from "./pages/create_list";
 
 export const Stack = createStackNavigator<NativeStackParams>();
 
@@ -36,10 +35,6 @@ export default function App() {
 						<Stack.Screen name="Home" component={HomeScreen} />
 
 						<Stack.Screen name={"List"} component={List} />
-						<Stack.Screen
-							name={"CreateList"}
-							component={CreateList}
-						/>
 					</Stack.Navigator>
 				</NavigationContainer>
 			</SafeAreaProvider>

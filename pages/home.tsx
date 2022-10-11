@@ -25,6 +25,7 @@ import {
 	Image,
 	Text,
 	Pressable,
+	Modal,
 } from "react-native";
 import { Button } from "react-native";
 import {
@@ -48,95 +49,164 @@ export const HomeScreen = ({
 	const navigator = useNavigation();
 	const context = useContext(AppContext);
 	const ref = useRef<ScrollView>(null);
+	const [create_page, set_create_page] = useState(false);
+
 	useEffect(() => {
 		ref.current!.flashScrollIndicators();
 	}, [ref]);
 	return (
-		<StyledView
-			style={{
-				...styles.home,
-				paddingTop: insets.top + 96,
-				paddingHorizontal: 32,
-				flex: 1,
-			}}
-		>
-			<StyledText style={styles.title_1}>Welcome, Albert</StyledText>
-			<View
-				style={{
-					paddingTop: 4,
-
-					justifyContent: "space-between",
-					alignItems: "flex-start",
-					flexDirection: "row",
-					width: "100%",
+		<>
+			<Modal
+				visible={create_page}
+				animationType="slide"
+				style={{}}
+				transparent={true}
+				onRequestClose={() => {
+					set_create_page(false);
 				}}
 			>
-				<StyledText style={{}}>You are participating in:</StyledText>
-				<TouchableOpacity
-					onPress={() => {
-						navigation.push("CreateList");
-					}}
-				>
-					<AntDesign
-						name="pluscircle"
-						color={"white"}
-						size={32}
-						style={{}}
-					/>
-				</TouchableOpacity>
-			</View>
-
-			<View
-				style={{
-					paddingVertical: 8,
-					flexDirection: "column",
-					alignSelf: "flex-start",
-					width: "100%",
-				}}
-			>
-				<ScrollView
-					ref={ref}
+				<View
 					style={{
-						maxHeight: 200,
-						borderRadius: 8,
-					}}
-					scrollIndicatorInsets={{
-						left: 4,
-						right: 4,
+						flex: 1,
+						justifyContent: "center",
+						alignItems: "center",
+						marginTop: 22,
 					}}
 				>
-					{context.client.fetch_lists().map((list, key) => {
-						console.log(list, key);
-						return (
-							<ListButton
-								navigation={navigation}
-								index={key}
-								list={list}
-								key={key}
-							/>
-						);
-					})}
-				</ScrollView>
-			</View>
-			<StyledText
+					<View
+						style={{
+							backgroundColor: "#1f1d1d",
+							elevation: 2,
+							width: "90%",
+							height: "70%",
+							borderRadius: 16,
+						}}
+					>
+						<View
+							style={{
+								marginTop: 12,
+								padding: 14,
+								flexDirection: "row",
+								justifyContent: "space-between",
+							}}
+						>
+							<StyledText
+								style={{
+									fontWeight: "bold",
+								}}
+							>
+								Create a new participation page
+							</StyledText>
+							<Pressable
+								onPress={() => {
+									set_create_page(!create_page);
+								}}
+							>
+								<View
+									style={{
+										padding: 4,
+										alignItems: "center",
+									}}
+								>
+									<AntDesign
+										size={16}
+										name="close"
+										color={"white"}
+									/>
+								</View>
+							</Pressable>
+						</View>
+					</View>
+				</View>
+			</Modal>
+			<StyledView
 				style={{
-					fontSize: 36,
-					alignSelf: "flex-start",
-				}}
-			>
-				Invitations
-			</StyledText>
-			<View
-				style={{
-					alignSelf: "flex-start",
-					width: "100%",
+					...styles.home,
+					paddingTop: insets.top + 96,
+					paddingHorizontal: 32,
 					flex: 1,
-					flexDirection: "column",
 				}}
 			>
-				<InvitationButton navigation={navigation} index={0} />
-			</View>
-		</StyledView>
+				<StyledText style={styles.title_1}>Welcome, Albert</StyledText>
+				<View
+					style={{
+						paddingTop: 4,
+
+						justifyContent: "space-between",
+						alignItems: "flex-start",
+						flexDirection: "row",
+						width: "100%",
+					}}
+				>
+					<StyledText style={{}}>
+						You are participating in:
+					</StyledText>
+					<TouchableOpacity
+						onPress={() => {
+							set_create_page(true);
+						}}
+					>
+						<AntDesign
+							name="pluscircle"
+							color={"white"}
+							size={32}
+							style={{}}
+						/>
+					</TouchableOpacity>
+				</View>
+
+				<View
+					style={{
+						paddingVertical: 8,
+						flexDirection: "column",
+						alignSelf: "flex-start",
+						width: "100%",
+					}}
+				>
+					<ScrollView
+						ref={ref}
+						style={{
+							maxHeight: 200,
+							borderRadius: 8,
+						}}
+						scrollIndicatorInsets={{
+							left: 4,
+							right: 4,
+						}}
+					>
+						{context.client.fetch_lists().map((list, key) => {
+							console.log(list, key);
+							return (
+								<ListButton
+									navigation={navigation}
+									index={key}
+									list={list}
+									key={key}
+								/>
+							);
+						})}
+					</ScrollView>
+				</View>
+				<StyledText
+					style={{
+						fontSize: 36,
+						alignSelf: "flex-start",
+					}}
+				>
+					Invitations
+				</StyledText>
+				<View
+					style={{
+						alignSelf: "flex-start",
+						width: "100%",
+						flex: 1,
+						flexDirection: "column",
+					}}
+				>
+					<InvitationButton navigation={navigation} index={0} />
+				</View>
+			</StyledView>
+		</>
 	);
 };
 export const InvitationButton: FC<{
