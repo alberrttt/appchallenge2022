@@ -10,34 +10,23 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { List } from "./pages/list";
 import { NativeStackParams } from "./src/types";
 import React, { useMemo } from "react";
-import { AppContext, Client, list, List as ListType } from "./src/client";
 import create from "zustand";
 export const Stack = createStackNavigator<NativeStackParams>();
 
 export default function App() {
-	const client = useMemo(() => {
-		const client = new Client();
-		return client;
-	}, []);
 	return (
-		<AppContext.Provider
-			value={{
-				client,
-			}}
-		>
-			<SafeAreaProvider>
-				<NavigationContainer>
-					<Stack.Navigator
-						screenOptions={{
-							headerShown: false,
-						}}
-					>
-						<Stack.Screen name="Home" component={HomeScreen} />
+		<SafeAreaProvider>
+			<NavigationContainer>
+				<Stack.Navigator
+					screenOptions={{
+						headerShown: false,
+					}}
+				>
+					<Stack.Screen name="Home" component={HomeScreen} />
 
-						<Stack.Screen name={"List"} component={List} />
-					</Stack.Navigator>
-				</NavigationContainer>
-			</SafeAreaProvider>
-		</AppContext.Provider>
+					<Stack.Screen name={"List"} component={List} />
+				</Stack.Navigator>
+			</NavigationContainer>
+		</SafeAreaProvider>
 	);
 }

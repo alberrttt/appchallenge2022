@@ -26,6 +26,7 @@ import {
 	Text,
 	Pressable,
 	Modal,
+	Alert,
 } from "react-native";
 import { Button } from "react-native";
 import {
@@ -42,29 +43,24 @@ import {
 	TextInput,
 	TouchableOpacity,
 } from "react-native-gesture-handler";
-import { NativeStackParams } from "../src/types";
+import { Invite, NativeStackParams } from "../src/types";
 import { random_images } from "../src/images";
 import { LinearGradient } from "expo-linear-gradient";
-import {
-	AppContext,
-	appearance,
-	list,
-	List,
-	ParticipationList,
-} from "../src/client";
-import { useListStore } from "../src/store";
+import { useInvitesStore, useListStore } from "../src/store";
+import { appearance, list } from "../src/utility";
+import { EnrolledList } from "../src/types";
 export const HomeScreen = ({
 	navigation,
 }: NativeStackScreenProps<NativeStackParams, "Home">) => {
 	const insets = useSafeAreaInsets();
 	const navigator = useNavigation();
-	const context = useContext(AppContext);
 	const [create_page, set_create_page] = useState(false);
 
 	const [color, set_color] = useState("blue");
 	const [hide, set_hide] = useState(false);
 	const state = useListStore((state) => state);
 	const modal_title = useState("title");
+	const invites = useInvitesStore();
 	return (
 		<>
 			<Modal
@@ -284,6 +280,7 @@ export const HomeScreen = ({
 										state.append_list(
 											list()({
 												name: modal_title[0],
+												id: state.lists.length.toString(),
 												owner_name: "Albert",
 												appearance: appearance()({
 													color: colors500[
@@ -294,6 +291,8 @@ export const HomeScreen = ({
 										);
 										set_hide(false);
 										set_create_page(false);
+
+										modal_title[1]("title");
 									}
 								}}
 							>
@@ -416,7 +415,9 @@ export const HomeScreen = ({
 							flexDirection: "column",
 						}}
 					>
-						<InvitationButton navigation={navigation} index={0} />
+						{invites.invites.map((invite, index) => {
+							return <InvitationButton index={index} />;
+						})}
 					</View>
 				</StyledView>
 			)}
@@ -424,31 +425,20 @@ export const HomeScreen = ({
 	);
 };
 export const InvitationButton: FC<{
-	navigation: NativeStackNavigationProp<NativeStackParams, "Home", undefined>;
 	index: number;
-	owner_name?: string;
-	title?: string;
-}> = ({
-	navigation,
-	index,
-	owner_name = "Albert",
-	title = "Taking care of my brother",
-}) => {
+}> = ({ index }) => {
 	const intoAnim = useRef(new Animated.Value(15 + 25 * index)).current;
 	const navi = useNavigation();
-	useEffect(() => {
-		navigation.addListener("focus", () => {
-			intoAnim.setValue(15 + 25 * index);
-			Animated.timing(intoAnim, {
-				toValue: 0,
-				duration: 500,
-				useNativeDriver: false,
-				easing: Easing.bounce,
-			}).start();
-		});
-	}, []);
+
+	const { invites, remove_invite } = useInvitesStore();
+	const list_state = useListStore();
+	const { id, owner_name, title }: Invite = invites[index] ?? {
+		id: "",
+		owner_name: "",
+		title: "",
+	};
 	const [options, setOptions] = useState(false);
-	return (
+	return invites[index] ? (
 		<Animated.View
 			style={{
 				top: intoAnim,
@@ -501,15 +491,35 @@ export const InvitationButton: FC<{
 					<Pressable
 						onPress={() => {
 							setOptions(!options);
+							Alert.alert("Accept invite?", "", [
+								{
+									style: "default",
+									text: "Accept",
+									onPress: () => {
+										list_state.append_list(
+											list()({
+												id: list_state.lists.length.toString(),
+												name: title,
+												owner_name,
+											})
+										);
+										remove_invite(id);
+									},
+								},
+								{
+									style: "destructive",
+									text: "Decline",
+									onPress: () => remove_invite(id),
+								},
+							]);
 						}}
 					>
 						<AntDesign name="ellipsis1" color={"white"} size={16} />
 					</Pressable>
-					{options ? <Option option={options} /> : undefined}
 				</View>
 			</View>
 		</Animated.View>
-	);
+	) : null;
 };
 export const Option = ({ option }: { option: boolean }) => {
 	const animated = useRef(new Animated.Value(50)).current;
@@ -538,7 +548,7 @@ export const Option = ({ option }: { option: boolean }) => {
 export const ListButton: FC<{
 	navigation: NativeStackNavigationProp<NativeStackParams, "Home", undefined>;
 	index: number;
-	list: List;
+	list: EnrolledList;
 }> = ({ navigation, index, list }) => {
 	const intoAnim = useRef(new Animated.Value(15 + 25 * index)).current;
 	const navi = useNavigation();
@@ -604,7 +614,6 @@ export const ListButton: FC<{
 				>
 					<TouchableOpacity
 						onPress={() => {
-							ParticipationList.fetch_all();
 							navigation.push("List", {
 								index,
 							});

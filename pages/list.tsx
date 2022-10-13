@@ -9,14 +9,13 @@ import {
 	ScrollView,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NativeStackParams } from "../src/types";
+import { EnrolledList, NativeStackParams } from "../src/types";
 import colors from "../src/colors";
 import { FC, useMemo } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { random_images } from "../src/images";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { List as List_, ParticipationList } from "../src/client";
 import { useListStore } from "../src/store";
 import { StyledButton } from "../components/button";
 export function List({
@@ -33,7 +32,7 @@ export function List({
 			owner_name: "awda",
 		},
 		state.lists[index] || {}
-	)! as List_;
+	)! as EnrolledList;
 	const a = useMemo(() => random_images(), []);
 	return (
 		<StyledView
@@ -112,6 +111,7 @@ export function List({
 							},
 						}}
 						onPressOut={() => {
+							console.log(state.lists, index);
 							state.remove_list(index);
 							navigation.goBack();
 						}}
