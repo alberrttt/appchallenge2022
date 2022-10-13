@@ -1,6 +1,6 @@
 export type NativeStackParams = {
 	List: {
-		list_id: string;
+		index: number;
 	};
 	Home: undefined;
 };

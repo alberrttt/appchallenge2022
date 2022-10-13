@@ -10,8 +10,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { List } from "./pages/list";
 import { NativeStackParams } from "./src/types";
 import React, { useMemo } from "react";
-import { AppContext, Client } from "./src/client";
-
+import { AppContext, Client, list, List as ListType } from "./src/client";
+import create from "zustand";
 export const Stack = createStackNavigator<NativeStackParams>();
 
 export default function App() {

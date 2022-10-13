@@ -45,21 +45,26 @@ import {
 import { NativeStackParams } from "../src/types";
 import { random_images } from "../src/images";
 import { LinearGradient } from "expo-linear-gradient";
-import { AppContext, List, ParticipationList } from "../src/client";
+import {
+	AppContext,
+	appearance,
+	list,
+	List,
+	ParticipationList,
+} from "../src/client";
+import { useListStore } from "../src/store";
 export const HomeScreen = ({
 	navigation,
 }: NativeStackScreenProps<NativeStackParams, "Home">) => {
 	const insets = useSafeAreaInsets();
 	const navigator = useNavigation();
 	const context = useContext(AppContext);
-	const ref = useRef<ScrollView>(null);
 	const [create_page, set_create_page] = useState(false);
 
-	useEffect(() => {
-		ref.current!.flashScrollIndicators();
-	}, [ref]);
-	const [color, set_color] = useState("none");
+	const [color, set_color] = useState("blue");
 	const [hide, set_hide] = useState(false);
+	const state = useListStore((state) => state);
+	const modal_title = useState("title");
 	return (
 		<>
 			<Modal
@@ -139,6 +144,9 @@ export const HomeScreen = ({
 									}}
 								>
 									<TextInput
+										onChangeText={(text) =>
+											modal_title[1](text)
+										}
 										maxLength={32}
 										style={{
 											paddingVertical: 1,
@@ -237,40 +245,69 @@ export const HomeScreen = ({
 									>
 										{Object.entries(colors500).map(
 											([key, value], index) => {
-												return (
-													<TouchableOpacity
-														key={index}
-														onPress={() => {
-															set_color(key);
-														}}
-													>
-														<View
-															style={{
-																width: 32,
-																height: 32,
-																borderRadius: 64,
-																marginRight: 4,
-																backgroundColor:
-																	value,
+												return React.createElement(
+													() => (
+														<TouchableOpacity
+															key={index}
+															onPress={() => {
+																set_color(key);
 															}}
-														/>
-													</TouchableOpacity>
+														>
+															<View
+																style={{
+																	width: 32,
+																	height: 32,
+																	borderRadius: 64,
+																	borderColor:
+																		"white",
+																	borderWidth:
+																		color ==
+																		key
+																			? 2
+																			: 0,
+																	marginRight: 4,
+																	backgroundColor:
+																		value,
+																}}
+															/>
+														</TouchableOpacity>
+													)
 												);
 											}
 										)}
 									</View>
 								</View>
 							</View>
-							<View
-								style={{
-									padding: 8,
-									backgroundColor: "#1F1F1F",
-									borderRadius: 8,
-									alignSelf: "flex-end",
+							<TouchableOpacity
+								onPress={() => {
+									if (modal_title[0].length > 0) {
+										state.append_list(
+											list()({
+												name: modal_title[0],
+												owner_name: "Albert",
+												appearance: appearance()({
+													color: colors500[
+														color as keyof typeof colors500
+													],
+												}),
+											})
+										);
+										set_hide(false);
+										set_create_page(false);
+									}
 								}}
 							>
-								<StyledText>Create</StyledText>
-							</View>
+								<View
+									style={{
+										padding: 8,
+										backgroundColor: "#1F1F1F",
+										borderRadius: 8,
+										alignSelf: "flex-end",
+									}}
+								>
+									<StyledText>Create</StyledText>
+								</View>
+							</TouchableOpacity>
 						</LinearGradient>
 					</View>
 				</View>
@@ -304,9 +341,20 @@ export const HomeScreen = ({
 							width: "100%",
 						}}
 					>
-						<StyledText style={{}}>
-							You are participating in:
-						</StyledText>
+						{state.lists.length > 0 ? (
+							<StyledText style={{}}>
+								You are participating in:
+							</StyledText>
+						) : (
+							<StyledText
+								style={{
+									maxWidth: 256,
+								}}
+							>
+								You aren't currently participating in anything,
+								create or ask to be invited!
+							</StyledText>
+						)}
 						<TouchableOpacity
 							onPress={() => {
 								set_create_page(true);
@@ -331,7 +379,6 @@ export const HomeScreen = ({
 						}}
 					>
 						<ScrollView
-							ref={ref}
 							style={{
 								maxHeight: 200,
 								borderRadius: 8,
@@ -341,8 +388,7 @@ export const HomeScreen = ({
 								right: 4,
 							}}
 						>
-							{context.client.fetch_lists().map((list, key) => {
-								console.log(list, key);
+							{state.lists.map((list, key) => {
 								return (
 									<ListButton
 										navigation={navigation}
@@ -510,15 +556,9 @@ export const ListButton: FC<{
 		});
 	}, []);
 	return (
-		<Animated.View
+		<View
 			style={{
-				marginTop: 12 * (index / index || index),
-				top: intoAnim,
-				opacity: intoAnim.interpolate({
-					inputRange: [0, 150],
-					outputRange: [1, 0],
-				}),
-				flexDirection: "column",
+				marginVertical: 8,
 			}}
 		>
 			<LinearGradient
@@ -544,7 +584,7 @@ export const ListButton: FC<{
 				>
 					<StyledText
 						style={{
-							fontSize: 28,
+							fontSize: 24,
 							marginTop: -2,
 							fontWeight: "bold",
 							alignItems: "flex-end",
@@ -566,7 +606,7 @@ export const ListButton: FC<{
 						onPress={() => {
 							ParticipationList.fetch_all();
 							navigation.push("List", {
-								list_id: list.id,
+								index,
 							});
 						}}
 					>
@@ -574,7 +614,6 @@ export const ListButton: FC<{
 					</TouchableOpacity>
 				</View>
 			</LinearGradient>
-
 			<View
 				style={{
 					flexGrow: 1,
@@ -591,7 +630,7 @@ export const ListButton: FC<{
 					}}
 				/>
 			</View>
-		</Animated.View>
+		</View>
 	);
 };
 const styles = StyleSheet.create({

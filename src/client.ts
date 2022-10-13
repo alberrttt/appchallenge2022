@@ -26,7 +26,7 @@ export interface Context {
 }
 export const AppContext = React.createContext<Context>({} as never);
 export type List = EnrolledList;
-function appearance() {
+export function appearance() {
 	return (merge?: Partial<ListAppearance>) => {
 		return Object.assign<ListAppearance, any>(
 			{
@@ -36,7 +36,7 @@ function appearance() {
 		);
 	};
 }
-function list() {
+export function list() {
 	return (merge?: Partial<EnrolledList>) => {
 		return Object.assign(
 			{

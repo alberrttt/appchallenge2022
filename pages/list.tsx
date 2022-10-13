@@ -17,20 +17,22 @@ import { random_images } from "../src/images";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { List as List_, ParticipationList } from "../src/client";
+import { useListStore } from "../src/store";
+import { StyledButton } from "../components/button";
 export function List({
 	navigation,
 	route,
 }: NativeStackScreenProps<NativeStackParams, "List">) {
 	const insets = useSafeAreaInsets();
-	const { list_id } = route.params;
-	console.log(ParticipationList.lists.get(list_id));
+	const state = useListStore();
+	const { index } = route.params;
 
 	const { name, owner_name } = Object.assign(
 		{
 			name: "awdawd",
 			owner_name: "awda",
 		},
-		ParticipationList.lists.get(list_id)! || {}
+		state.lists[index] || {}
 	)! as List_;
 	const a = useMemo(() => random_images(), []);
 	return (
@@ -96,16 +98,40 @@ export function List({
 				<View
 					style={{
 						marginTop: 4,
+						flexDirection: "row",
 					}}
 				>
-					<View
-						style={{
-							justifyContent: "space-between",
-							flexDirection: "row",
-							backgroundColor: colors.Jet,
-							padding: 8,
-							borderRadius: 8,
-							alignSelf: "flex-start",
+					<StyledButton
+						view={{
+							style: {
+								marginRight: 8,
+								backgroundColor: colors["Carmine Pink"],
+								padding: 8,
+								borderRadius: 8,
+								alignSelf: "flex-start",
+							},
+						}}
+						onPressOut={() => {
+							state.remove_list(index);
+							navigation.goBack();
+						}}
+					>
+						<StyledText
+							style={{
+								fontSize: 16,
+							}}
+						>
+							Leave
+						</StyledText>
+					</StyledButton>
+					<StyledButton
+						view={{
+							style: {
+								backgroundColor: colors.Jet,
+								padding: 8,
+								borderRadius: 8,
+								alignSelf: "flex-start",
+							},
 						}}
 					>
 						<StyledText
@@ -115,7 +141,7 @@ export function List({
 						>
 							Assign self
 						</StyledText>
-					</View>
+					</StyledButton>
 				</View>
 			</View>
 		</StyledView>
