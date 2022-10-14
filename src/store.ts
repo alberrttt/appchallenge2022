@@ -10,7 +10,7 @@ interface ListState {
 }
 export const useListStore = create<ListState>((set) => {
 	return {
-		lists: [list()()] as EnrolledList[],
+		lists: [] as EnrolledList[],
 		append_list: (list: EnrolledList) =>
 			set((state) => ({
 				lists: [...state.lists, list],

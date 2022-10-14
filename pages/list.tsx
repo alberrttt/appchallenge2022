@@ -23,56 +23,74 @@ import { StyledButton } from "../components/button";
 import { Pressable } from "react-native";
 import create from "zustand";
 import { TextInput } from "react-native-gesture-handler";
+type id = string;
 interface AssignmentState {
-	selected_assignments: string[];
-	add(name: string): void;
-	sub(name: string): void;
+	selected_assignments: Map<id, string[]>;
+	add(id: id, name: string): void;
+	sub(id: id, name: string): void;
 	reset(): void;
-	assigned: [string, string][];
-	add_assigned(name: string, description: string): void;
-	sub_assigned(name: string): void;
+	assigned: Map<id, [string, string][]>;
+	add_assigned(id: id, name: string, description: string): void;
+	sub_assigned(id: id, name: string): void;
 }
 
 export const useAssignmentState = create<AssignmentState>((set) => {
 	return {
-		selected_assignments: [],
-		add(name) {
+		selected_assignments: new Map(),
+		add(id, name) {
+			if (!this.selected_assignments.get(id)) {
+				this.selected_assignments.set(id, []);
+			}
 			set((state) => {
+				const a = state.selected_assignments;
+				const names = a.get(id)!;
+				names.push(name);
+				a.set(id, names);
 				return {
-					selected_assignments: [...state.selected_assignments, name],
+					selected_assignments: a,
 				};
 			});
 		},
-		sub(name) {
+		sub(id, name) {
 			set((state) => {
+				const a = state.selected_assignments;
+				const array = state.selected_assignments
+					.get(id)!
+					.filter((value) => value != name);
+				a.set(id, array);
 				return {
-					selected_assignments: state.selected_assignments.filter(
-						(value) => value != name
-					),
+					selected_assignments: a,
 				};
 			});
 		},
-		assigned: [],
-		add_assigned(name, description = "") {
+		assigned: new Map(),
+		add_assigned(id, name, description = "") {
 			set((state) => {
 				return {
-					assigned: [...state.assigned, [name, description]],
+					assigned: state.assigned.set(id, [
+						...state.assigned.get(id)!,
+						[name, description],
+					]),
 				};
 			});
 		},
-		sub_assigned(name) {
+		sub_assigned(id, name) {
 			set((state) => {
 				return {
-					assigned: state.assigned.filter(
-						(value) => value[0] != name
+					assigned: state.assigned.set(
+						id,
+						state.assigned
+							.get(id)!
+							.filter((value) => value[0] != name)
 					),
 				};
 			});
 		},
 		reset() {
 			set((state) => {
+				state.selected_assignments.clear();
 				return {
-					selected_assignments: [],
+					selected_assignments: state.selected_assignments,
 				};
 			});
 		},
@@ -87,7 +105,7 @@ export function List({
 }: NativeStackScreenProps<NativeStackParams, "List">) {
 	const insets = useSafeAreaInsets();
 	const state = useListStore();
-	const { index } = route.params;
+	const { id, index } = route.params;
 	const assignments = useAssignmentState();
 	const { name, owner_name } = Object.assign(
 		{
@@ -172,10 +190,13 @@ export function List({
 									flexDirection: "column",
 								}}
 							>
-								<AssignmentSelection name="Albert (Self)" />
-								<AssignmentSelection name="Vincent" />
-								<AssignmentSelection name="Kyle" />
-								<AssignmentSelection name="Kimberly" />
+								<AssignmentSelection
+									id={id}
+									name="Albert (Self)"
+								/>
+								<AssignmentSelection id={id} name="Vincent" />
+								<AssignmentSelection id={id} name="Kyle" />
+								<AssignmentSelection id={id} name="Kimberly" />
 							</View>
 							<View
 								style={{
@@ -185,6 +206,8 @@ export function List({
 								<StyledText
 									style={{
 										marginTop: 4,
+										fontSize: 16,
+										fontWeight: "500",
 									}}
 								>
 									Add a description (optional)
@@ -195,7 +218,7 @@ export function List({
 									}
 									placeholder="Type here"
 									style={{
-										color: "white",
+										color: colors["Dim Gray"],
 									}}
 								/>
 							</View>
@@ -205,14 +228,15 @@ export function List({
 								alignSelf: "flex-end",
 							}}
 							onPress={() => {
-								assignments.selected_assignments.forEach(
-									(name) => {
+								assignments.selected_assignments
+									.get(id)!
+									.forEach((name) => {
 										assignments.add_assigned(
+											id,
 											name,
 											assigned_description
 										);
-									}
-								);
+									});
 								assignments.reset();
 								set_assign(false);
 							}}
@@ -274,7 +298,7 @@ export function List({
 							{name}
 						</StyledText>
 						<StyledText>
-							{unique_items(assignments.assigned)} Active
+							{unique_items(assignments.assigned.get(id)!)} Active
 							Participants
 						</StyledText>
 						<StyledText>4 Participants</StyledText>
@@ -296,7 +320,7 @@ export function List({
 								persistentScrollbar={true}
 								showsVerticalScrollIndicator={true}
 							>
-								{[...assignments.assigned].map((name) => {
+								{assignments.assigned.get(id)!.map((name) => {
 									console.log(name);
 									return (
 										<Participant
@@ -401,7 +425,10 @@ export function List({
 		</>
 	);
 }
-const AssignmentSelection: FC<{ name: string }> = ({ name }) => {
+const AssignmentSelection: FC<{ id: string; name: string }> = ({
+	id,
+	name,
+}) => {
 	const state = useAssignmentState();
 	const [selected, set_selected] = useState(false);
 	return (
@@ -409,9 +436,9 @@ const AssignmentSelection: FC<{ name: string }> = ({ name }) => {
 			onPress={() => {
 				set_selected(!selected);
 				if (selected) {
-					state.sub(name);
+					state.sub(id, name);
 				} else {
-					state.add(name);
+					state.add(id, name);
 				}
 			}}
 		>

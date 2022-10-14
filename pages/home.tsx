@@ -49,6 +49,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useInvitesStore, useListStore } from "../src/store";
 import { appearance, list } from "../src/utility";
 import { EnrolledList } from "../src/types";
+import { useAssignmentState } from "./list";
 export const HomeScreen = ({
 	navigation,
 }: NativeStackScreenProps<NativeStackParams, "Home">) => {
@@ -61,6 +62,7 @@ export const HomeScreen = ({
 	const state = useListStore((state) => state);
 	const modal_title = useState("title");
 	const invites = useInvitesStore();
+	const assignment = useAssignmentState();
 	return (
 		<>
 			<Modal
@@ -289,6 +291,12 @@ export const HomeScreen = ({
 												}),
 											})
 										);
+
+										assignment.assigned.set(
+											state.lists.length.toString(),
+											[]
+										);
+
 										set_hide(false);
 										set_create_page(false);
 
@@ -438,6 +446,7 @@ export const InvitationButton: FC<{
 		title: "",
 	};
 	const [options, setOptions] = useState(false);
+	const assignments = useAssignmentState();
 	return invites[index] ? (
 		<Animated.View
 			style={{
@@ -502,6 +511,10 @@ export const InvitationButton: FC<{
 												name: title,
 												owner_name,
 											})
+										);
+										assignments.assigned.set(
+											list_state.lists.length.toString(),
+											[]
 										);
 										remove_invite(id);
 									},
@@ -615,6 +628,7 @@ export const ListButton: FC<{
 					<TouchableOpacity
 						onPress={() => {
 							navigation.push("List", {
+								id: list.id,
 								index,
 							});
 						}}

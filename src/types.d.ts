@@ -1,8 +1,10 @@
 export type NativeStackParams = {
 	List: {
+		id: string;
 		index: number;
 	};
 	Home: undefined;
+	Login: undefined;
 };
 export interface ListAppearance {
 	color: string;
