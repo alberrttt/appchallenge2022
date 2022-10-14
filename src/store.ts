@@ -1,6 +1,7 @@
 import create from "zustand";
+import { colors500 } from "./colors";
 import { EnrolledList, Invite } from "./types";
-import { list } from "./utility";
+import { appearance, list } from "./utility";
 
 interface ListState {
 	lists: EnrolledList[];
@@ -16,7 +17,10 @@ export const useListStore = create<ListState>((set) => {
 			})),
 		remove_list: (rm_index: number) =>
 			set((state) => ({
-				lists: [...state.lists.filter((_, index) => index != rm_index)],
+				lists: state.lists.filter((_, index) => {
+					console.log(index, rm_index);
+					return index != rm_index;
+				}),
 			})),
 	} as const;
 });
@@ -47,9 +51,14 @@ export const useInvitesStore = create<InviteState>((set) => {
 			}));
 		},
 		remove_invite(invite_id) {
-			set((state) => ({
-				invites: [...state.invites.filter((v) => v.id != invite_id)],
-			}));
+			set((state) => {
+				console.log("REMOVING");
+				return {
+					invites: state.invites.filter((v) => {
+						console.log("id is " + v.id);
+					}),
+				};
+			});
 		},
 	};
 });
