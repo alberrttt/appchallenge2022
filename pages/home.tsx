@@ -27,6 +27,7 @@ import {
 	Pressable,
 	Modal,
 	Alert,
+	Clipboard,
 } from "react-native";
 import { Button } from "react-native";
 import {
@@ -335,9 +336,29 @@ export const HomeScreen = ({
 						flex: 1,
 					}}
 				>
-					<StyledText style={styles.title_1}>
-						Welcome, Albert
-					</StyledText>
+					<View
+						style={{
+							flexDirection: "row",
+							alignSelf: "flex-start",
+						}}
+					>
+						<StyledText style={styles.title_1}>Welcome,</StyledText>
+						<StyledText style={styles.title_1}> Albert</StyledText>
+						<View
+							style={{
+								marginLeft: 4,
+							}}
+						>
+							<AntDesign
+								name="copy1"
+								onPress={() => {
+									Clipboard.setString("Albert#1234");
+								}}
+								size={16}
+								color="gray"
+							/>
+						</View>
+					</View>
 					<View
 						style={{
 							paddingTop: 4,
@@ -370,7 +391,7 @@ export const HomeScreen = ({
 						>
 							<AntDesign
 								name="pluscircle"
-								color={"white"}
+								color={"#22f55e"}
 								size={32}
 								style={{}}
 							/>
@@ -379,7 +400,7 @@ export const HomeScreen = ({
 
 					<View
 						style={{
-							paddingVertical: 8,
+							paddingVertical: 2,
 							flexDirection: "column",
 							alignSelf: "flex-start",
 							width: "100%",
@@ -448,15 +469,7 @@ export const InvitationButton: FC<{
 	const [options, setOptions] = useState(false);
 	const assignments = useAssignmentState();
 	return invites[index] ? (
-		<Animated.View
-			style={{
-				top: intoAnim,
-				opacity: intoAnim.interpolate({
-					inputRange: [0, 150],
-					outputRange: [1, 0],
-				}),
-			}}
-		>
+		<Animated.View style={{}}>
 			<View
 				style={{
 					marginTop: 8,

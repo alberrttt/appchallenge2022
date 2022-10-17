@@ -1,5 +1,5 @@
 import create from "zustand";
-import { colors500 } from "./colors";
+import colors, { colors500 } from "./colors";
 import { EnrolledList, Invite } from "./types";
 import { appearance, list } from "./utility";
 
@@ -10,7 +10,15 @@ interface ListState {
 }
 export const useListStore = create<ListState>((set) => {
 	return {
-		lists: [] as EnrolledList[],
+		lists: [
+			list()({
+				name: "Helping Aunty Vivian",
+				owner_name: "Kimberly",
+				appearance: appearance()({
+					color: colors500.red,
+				}),
+			}),
+		] as EnrolledList[],
 		append_list: (list: EnrolledList) =>
 			set((state) => ({
 				lists: [...state.lists, list],
@@ -33,9 +41,9 @@ export const useInvitesStore = create<InviteState>((set) => {
 	return {
 		invites: [
 			{
-				id: "0",
-				title: "Gardening",
+				id: "1",
 				owner_name: "Vincent",
+				title: "Gardening",
 			},
 		],
 		new_invite(invite_id: string, owner_name: string, title: string) {

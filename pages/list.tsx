@@ -63,7 +63,7 @@ export const useAssignmentState = create<AssignmentState>((set) => {
 				};
 			});
 		},
-		assigned: new Map(),
+		assigned: new Map<id, [string, string][]>([["0", []]]),
 		add_assigned(id, name, description = "") {
 			set((state) => {
 				return {
@@ -305,8 +305,8 @@ export function List({
 
 						<View
 							style={{
-								flex: 1,
 								maxHeight: 157,
+								flex: 1,
 							}}
 						>
 							<ScrollView
