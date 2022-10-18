@@ -270,7 +270,10 @@ export const HomeScreen = ({
 																}}
 															/>
 														</TouchableOpacity>
-													)
+													),
+													{
+														key: index,
+													}
 												);
 											}
 										)}

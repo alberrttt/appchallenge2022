@@ -9,11 +9,12 @@ import {
 	ScrollView,
 	Alert,
 	Modal,
+	Animated,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { EnrolledList, NativeStackParams } from "../src/types";
 import colors, { colors500 } from "../src/colors";
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { random_images } from "../src/images";
 import React from "react";
@@ -22,7 +23,7 @@ import { useListStore } from "../src/store";
 import { StyledButton } from "../components/button";
 import { Pressable } from "react-native";
 import create from "zustand";
-import { TextInput } from "react-native-gesture-handler";
+import { RectButton, Swipeable, TextInput } from "react-native-gesture-handler";
 type id = string;
 interface AssignmentState {
 	selected_assignments: Map<id, string[]>;
@@ -238,6 +239,7 @@ export function List({
 										);
 									});
 								assignments.reset();
+								set_assigned_description("");
 								set_assign(false);
 							}}
 						>
@@ -298,8 +300,8 @@ export function List({
 							{name}
 						</StyledText>
 						<StyledText>
-							{unique_items(assignments.assigned.get(id)!)} Active
-							Participants
+							{unique_items(assignments.assigned.get(id)!)}{" "}
+							Assignments
 						</StyledText>
 						<StyledText>4 Participants</StyledText>
 
@@ -472,53 +474,122 @@ const Participant: FC<{
 	date = "1 Week: Sept 30 - Aug 7",
 	name = "Albert",
 	description = "",
-}) => (
-	<View
-		style={{
-			marginTop: 6,
-			width: "100%",
-		}}
-	>
-		<View
-			style={{
-				justifyContent: "space-between",
-				flexDirection: "row",
-				borderRadius: 8,
-				padding: 8,
-				alignItems: "center",
-				backgroundColor: colors["Eerie Black"],
+}) => {
+	const ref = useRef<Swipeable>(null);
+	const [unit_progress, set_unit_progress] = useState(0);
+	const [padding, set_padding] = useState(8);
+
+	useEffect(() => {
+		if (unit_progress >= 0.99) {
+			set_padding(0);
+		} else {
+			set_padding(8);
+		}
+	}, [unit_progress]);
+	return (
+		<Swipeable
+			ref={ref}
+			renderLeftActions={(progress, drag) => {
+				const transform = drag.interpolate({
+					inputRange: [0, 50, 100, 101],
+					outputRange: [-20, 0, 0, 1],
+					extrapolate: "clamp",
+				});
+				transform.addListener(({ value }) => {
+					set_unit_progress(value);
+				});
+
+				return (
+					<RectButton
+						style={{
+							marginTop: 6,
+						}}
+					>
+						<Animated.View
+							style={{
+								transform: [
+									{
+										translateX: transform,
+									},
+								],
+							}}
+						>
+							<View
+								style={{
+									backgroundColor: colors500.green,
+								}}
+							>
+								<StyledText>AHHUD</StyledText>
+							</View>
+						</Animated.View>
+					</RectButton>
+				);
 			}}
 		>
 			<View
 				style={{
-					flexDirection: "column",
+					marginTop: 6,
+					width: "100%",
 				}}
 			>
-				<StyledText
+				<View
 					style={{
-						marginLeft: 4,
-						fontSize: 18,
+						justifyContent: "space-between",
+						flexDirection: "row",
+						borderRadius: 8,
+						padding: 8,
+						alignItems: "center",
+						backgroundColor: colors["Eerie Black"],
 					}}
 				>
-					{name}
-				</StyledText>
-				<StyledText
-					style={{
-						marginLeft: 4,
-						color: colors["Dim Gray"],
-						fontSize: 16,
-					}}
-				>
-					{description}
-				</StyledText>
+					<View
+						style={{
+							flexDirection: "column",
+							flex: 1,
+						}}
+					>
+						<View
+							style={{
+								flexDirection: "row",
+								flexGrow: 1,
+								justifyContent: "space-between",
+							}}
+						>
+							<StyledText
+								style={{
+									marginLeft: 4,
+									fontSize: 18,
+								}}
+							>
+								{name}
+							</StyledText>
+							<AntDesign
+								name="arrowright"
+								color="white"
+								size={16}
+							/>
+						</View>
+						{description.length > 0 ? (
+							<StyledText
+								style={{
+									marginLeft: 4,
+									color: colors["Dim Gray"],
+									fontSize: 16,
+								}}
+							>
+								{description}
+							</StyledText>
+						) : null}
+					</View>
+					<StyledText
+						style={{
+							color: colors["Davys Grey"],
+						}}
+					>
+						{date}
+					</StyledText>
+				</View>
 			</View>
-			<StyledText
-				style={{
-					color: colors["Davys Grey"],
-				}}
-			>
-				{date}
-			</StyledText>
-		</View>
-	</View>
-);
+		</Swipeable>
+	);
+};
