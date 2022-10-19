@@ -55,10 +55,7 @@ export const useAssignmentState = create<AssignmentState>((set) => {
 		sub(id, name) {
 			set((state) => {
 				const a = state.selected_assignments;
-				const array = state.selected_assignments
-					.get(id)!
-					.filter((value) => value != name);
-				a.set(id, array);
+				a.delete(id);
 				return {
 					selected_assignments: a,
 				};
@@ -325,11 +322,18 @@ export function List({
 								{assignments.assigned.get(id)!.map((name) => {
 									console.log(name);
 									return (
-										<Participant
-											name={name[0]}
-											date={""}
-											description={name[1]}
-										/>
+										<View
+											style={{
+												marginTop: 4,
+											}}
+										>
+											<Participant
+												id={id}
+												name={name[0]}
+												date={""}
+												description={name[1]}
+											/>
+										</View>
 									);
 								})}
 							</ScrollView>
@@ -470,43 +474,44 @@ const Participant: FC<{
 	date?: string;
 	name?: string;
 	description?: string;
+	id: string;
 }> = ({
 	date = "1 Week: Sept 30 - Aug 7",
 	name = "Albert",
 	description = "",
+	id,
 }) => {
 	const ref = useRef<Swipeable>(null);
 	const [unit_progress, set_unit_progress] = useState(0);
-	const [padding, set_padding] = useState(8);
-
-	useEffect(() => {
-		if (unit_progress >= 0.99) {
-			set_padding(0);
-		} else {
-			set_padding(8);
-		}
-	}, [unit_progress]);
+	const [border_radius, set_border_radius] = useState(8);
+	const [height, set_height] = useState(0);
+	const view = useRef<View>(null);
+	const assigned = useAssignmentState();
 	return (
 		<Swipeable
 			ref={ref}
+			containerStyle={{}}
 			renderLeftActions={(progress, drag) => {
 				const transform = drag.interpolate({
 					inputRange: [0, 50, 100, 101],
 					outputRange: [-20, 0, 0, 1],
 					extrapolate: "clamp",
 				});
-				transform.addListener(({ value }) => {
-					set_unit_progress(value);
-				});
 
 				return (
 					<RectButton
+						onPress={() => {
+							console.log("AAUA");
+							assigned.sub_assigned(id, name);
+						}}
 						style={{
-							marginTop: 6,
+							height: height,
+							borderRadius: 8,
 						}}
 					>
 						<Animated.View
 							style={{
+								flex: 1,
 								transform: [
 									{
 										translateX: transform,
@@ -516,30 +521,41 @@ const Participant: FC<{
 						>
 							<View
 								style={{
-									backgroundColor: colors500.green,
+									flex: 1,
+									backgroundColor: colors500.blue,
+									padding: 8,
+									borderTopLeftRadius: 8,
+									flexDirection: "column",
+									borderBottomLeftRadius: 8,
+									flexShrink: 1,
+									alignSelf: "center",
+									justifyContent: "center",
 								}}
 							>
-								<StyledText>AHHUD</StyledText>
+								<StyledText
+									style={{
+										fontSize: 18,
+									}}
+								>
+									Done
+								</StyledText>
 							</View>
 						</Animated.View>
 					</RectButton>
 				);
 			}}
 		>
-			<View
-				style={{
-					marginTop: 6,
-					width: "100%",
-				}}
-			>
+			<View style={{}} ref={view}>
 				<View
 					style={{
 						justifyContent: "space-between",
 						flexDirection: "row",
-						borderRadius: 8,
-						padding: 8,
+						padding: border_radius,
 						alignItems: "center",
 						backgroundColor: colors["Eerie Black"],
+					}}
+					onLayout={(e) => {
+						set_height(e.nativeEvent.layout.height);
 					}}
 				>
 					<View
