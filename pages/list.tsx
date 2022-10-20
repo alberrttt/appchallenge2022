@@ -115,6 +115,10 @@ export function List({
 	const a = useMemo(() => random_images(), []);
 	const [show_assign, set_assign] = useState(false);
 	const [assigned_description, set_assigned_description] = useState("");
+	const [max_h, set_max_h] = useState(157);
+	useEffect(() => {
+		console.log(assignments.assigned);
+	}, [assignments.assigned]);
 	return (
 		<>
 			<Modal
@@ -304,7 +308,7 @@ export function List({
 
 						<View
 							style={{
-								maxHeight: 157,
+								maxHeight: max_h,
 								flex: 1,
 							}}
 						>
@@ -319,23 +323,26 @@ export function List({
 								persistentScrollbar={true}
 								showsVerticalScrollIndicator={true}
 							>
-								{assignments.assigned.get(id)!.map((name) => {
-									console.log(name);
-									return (
-										<View
-											style={{
-												marginTop: 4,
-											}}
-										>
-											<Participant
-												id={id}
-												name={name[0]}
-												date={""}
-												description={name[1]}
-											/>
-										</View>
-									);
-								})}
+								{assignments.assigned
+									.get(id)!
+									.map((name, k) => {
+										console.log(name);
+										return (
+											<View
+												style={{
+													marginTop: 4,
+												}}
+												key={k}
+											>
+												<Participant
+													id={id}
+													name={name[0]}
+													date={""}
+													description={name[1]}
+												/>
+											</View>
+										);
+									})}
 							</ScrollView>
 						</View>
 						<View
@@ -392,6 +399,7 @@ export function List({
 								</StyledButton>
 								<View
 									style={{
+										marginRight: 8,
 										flexDirection: "column",
 									}}
 								>
@@ -413,6 +421,31 @@ export function List({
 											}}
 										>
 											Assign
+										</StyledText>
+									</StyledButton>
+								</View>
+								<View
+									style={{
+										flexDirection: "column",
+									}}
+								>
+									<StyledButton
+										view={{
+											style: {
+												backgroundColor: colors.Jet,
+												padding: 8,
+												borderRadius: 8,
+												alignSelf: "flex-start",
+											},
+										}}
+										onPress={() => set_assign(true)}
+									>
+										<StyledText
+											style={{
+												fontSize: 16,
+											}}
+										>
+											Invite
 										</StyledText>
 									</StyledButton>
 								</View>
@@ -503,6 +536,7 @@ const Participant: FC<{
 						onPress={() => {
 							console.log("AAUA");
 							assigned.sub_assigned(id, name);
+							ref.current?.close();
 						}}
 						style={{
 							height: height,

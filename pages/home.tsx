@@ -448,7 +448,9 @@ export const HomeScreen = ({
 						}}
 					>
 						{invites.invites.map((invite, index) => {
-							return <InvitationButton index={index} />;
+							return (
+								<InvitationButton index={index} key={index} />
+							);
 						})}
 					</View>
 				</StyledView>
