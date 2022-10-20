@@ -34,7 +34,8 @@ interface AssignmentState {
 	add_assigned(id: id, name: string, description: string): void;
 	sub_assigned(id: id, name: string): void;
 }
-
+export interface InviteState {}
+export const invited = create();
 export const useAssignmentState = create<AssignmentState>((set) => {
 	return {
 		selected_assignments: new Map(),
@@ -114,11 +115,13 @@ export function List({
 	)! as EnrolledList;
 	const a = useMemo(() => random_images(), []);
 	const [show_assign, set_assign] = useState(false);
+	const [show_invite, set_show_invite] = useState(false);
 	const [assigned_description, set_assigned_description] = useState("");
 	const [max_h, set_max_h] = useState(157);
 	useEffect(() => {
-		console.log(assignments.assigned);
-	}, [assignments.assigned]);
+		set_max_h(assignments.assigned.size > 0 ? 156 : 0);
+	}, [assignments]);
+	const [invite_name, set_invite_name] = useState("");
 	return (
 		<>
 			<Modal
@@ -258,7 +261,7 @@ export function List({
 										color: colors["Eerie Black"],
 									}}
 								>
-									Finalize
+									Assign
 								</StyledText>
 							</View>
 						</TouchableOpacity>
@@ -266,7 +269,107 @@ export function List({
 				</View>
 			</Modal>
 
-			{!show_assign ? (
+			{/* invite modal screen */}
+			<Modal
+				visible={show_invite}
+				transparent={true}
+				animationType="fade"
+			>
+				<View
+					style={{
+						justifyContent: "center",
+						flexDirection: "row",
+						alignItems: "flex-start",
+
+						marginTop: 75 + insets.top,
+					}}
+				>
+					<View
+						style={{
+							backgroundColor: "#1f1d1d",
+							elevation: 2,
+							padding: 14,
+							borderRadius: 16,
+							minWidth: "80%",
+						}}
+					>
+						{/* header */}
+						<View
+							style={{
+								flexDirection: "row",
+								justifyContent: "space-between",
+								alignItems: "center",
+							}}
+						>
+							<StyledText
+								style={{
+									fontWeight: "bold",
+									fontSize: 18,
+								}}
+							>
+								Invites
+							</StyledText>
+							<Pressable
+								onPress={() => {
+									set_show_invite(false);
+								}}
+							>
+								<View
+									style={{
+										padding: 4,
+										alignItems: "center",
+									}}
+								>
+									<AntDesign
+										size={16}
+										name="close"
+										color={"white"}
+									/>
+								</View>
+							</Pressable>
+						</View>
+
+						{/* body */}
+						<View>
+							<TextInput
+								style={{
+									marginBottom: 4,
+									padding: 2,
+
+									color: "white",
+									fontSize: 18,
+								}}
+								onChangeText={set_invite_name}
+								placeholder={"Username; Ex: Albert#1829"}
+								placeholderTextColor={"gray"}
+							/>
+							<TouchableOpacity
+								onPress={() => {}}
+								style={{
+									alignSelf: "flex-end",
+								}}
+							>
+								<View
+									style={{
+										padding: 8,
+										borderRadius: 8,
+										backgroundColor: colors500.purple,
+									}}
+								>
+									<StyledText
+										style={{
+											fontSize: 18,
+										}}
+									>
+										Invite
+									</StyledText>
+								</View>
+							</TouchableOpacity>
+						</View>
+					</View>
+				</View>
+			</Modal>
+			{!(show_assign || show_invite) ? (
 				<StyledView
 					style={{
 						flex: 1,
@@ -309,15 +412,13 @@ export function List({
 						<View
 							style={{
 								maxHeight: max_h,
-								flex: 1,
+								marginVertical: 2,
 							}}
 						>
 							<ScrollView
 								style={{
 									marginTop: 8,
 									flexDirection: "column",
-									flexGrow: 1,
-									flex: 1,
 								}}
 								snapToInterval={37}
 								persistentScrollbar={true}
@@ -399,14 +500,12 @@ export function List({
 								</StyledButton>
 								<View
 									style={{
-										marginRight: 8,
 										flexDirection: "column",
 									}}
 								>
 									<StyledButton
 										view={{
 											style: {
-												marginRight: 8,
 												backgroundColor: colors.Jet,
 												padding: 8,
 												borderRadius: 8,
@@ -426,6 +525,7 @@ export function List({
 								</View>
 								<View
 									style={{
+										marginLeft: 8,
 										flexDirection: "column",
 									}}
 								>
@@ -438,7 +538,7 @@ export function List({
 												alignSelf: "flex-start",
 											},
 										}}
-										onPress={() => set_assign(true)}
+										onPress={() => set_show_invite(true)}
 									>
 										<StyledText
 											style={{
