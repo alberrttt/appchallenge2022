@@ -19,6 +19,7 @@ export function list() {
 				owner_name: "Kimberly",
 				name: "Aunt Vivan",
 				appearance: appearance()({}),
+				participants: [],
 			},
 			merge ?? {}
 		);

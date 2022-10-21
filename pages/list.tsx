@@ -34,8 +34,19 @@ interface AssignmentState {
 	add_assigned(id: id, name: string, description: string): void;
 	sub_assigned(id: id, name: string): void;
 }
-export interface InviteState {}
-export const invited = create();
+
+export interface InviteState {
+	invited: Map<String, string[]>;
+	dispatch: (cb: (state: InviteState) => Partial<InviteState>) => void;
+}
+export const useInvited = create<InviteState>((set) => {
+	return {
+		invited: new Map(),
+		dispatch(cb) {
+			set((state) => cb(state));
+		},
+	};
+});
 export const useAssignmentState = create<AssignmentState>((set) => {
 	return {
 		selected_assignments: new Map(),
@@ -106,7 +117,7 @@ export function List({
 	const state = useListStore();
 	const { id, index } = route.params;
 	const assignments = useAssignmentState();
-	const { name, owner_name } = Object.assign(
+	const { name, owner_name, participants } = Object.assign(
 		{
 			name: "awdawd",
 			owner_name: "awda",
@@ -122,6 +133,7 @@ export function List({
 		set_max_h(assignments.assigned.size > 0 ? 156 : 0);
 	}, [assignments]);
 	const [invite_name, set_invite_name] = useState("");
+	const invited = useInvited();
 	return (
 		<>
 			<Modal
@@ -195,13 +207,18 @@ export function List({
 									flexDirection: "column",
 								}}
 							>
+								{/* assignments */}
 								<AssignmentSelection
 									id={id}
 									name="Albert (Self)"
 								/>
-								<AssignmentSelection id={id} name="Vincent" />
-								<AssignmentSelection id={id} name="Kyle" />
-								<AssignmentSelection id={id} name="Kimberly" />
+								{participants.map((name, index) => (
+									<AssignmentSelection
+										key={index}
+										id={index.toString()}
+										name={name as string}
+									/>
+								))}
 							</View>
 							<View
 								style={{
@@ -340,11 +357,22 @@ export function List({
 									fontSize: 18,
 								}}
 								onChangeText={set_invite_name}
+								value={invite_name}
 								placeholder={"Username; Ex: Albert#1829"}
 								placeholderTextColor={"gray"}
 							/>
 							<TouchableOpacity
-								onPress={() => {}}
+								onPress={() => {
+									invited.dispatch((state) => {
+										state.invited
+											.get(id)!
+											.push(invite_name);
+										Alert.alert("Invited " + invite_name);
+										set_invite_name("");
+										return state;
+									});
+									set_show_invite(false);
+								}}
 								style={{
 									alignSelf: "flex-end",
 								}}
@@ -445,6 +473,119 @@ export function List({
 										);
 									})}
 							</ScrollView>
+						</View>
+						<View
+							style={{
+								flexDirection: "column",
+							}}
+						>
+							<StyledText
+								style={{
+									fontSize: 24,
+								}}
+							>
+								Pending Invites
+							</StyledText>
+							<View
+								style={{
+									marginVertical: 2,
+									marginBottom: 8,
+								}}
+							>
+								{invited.invited.get(id)!.length > 0 ? (
+									invited.invited.get(id)!.map((name, i) => {
+										return React.createElement(
+											() => {
+												return (
+													<View
+														key={i}
+														style={{
+															padding: 8,
+															borderRadius: 8,
+															backgroundColor:
+																"#5F5F5F",
+															flexDirection:
+																"row",
+															alignItems:
+																"center",
+															justifyContent:
+																"space-between",
+														}}
+													>
+														<StyledText
+															style={{
+																fontSize: 18,
+															}}
+														>
+															{name}
+														</StyledText>
+														<TouchableOpacity
+															onPress={() => {
+																Alert.alert(
+																	`Uninvite ${name}?`,
+																	"press 'Confirm' to uninvite",
+																	[
+																		{
+																			text: "Cancel",
+																		},
+																		{
+																			text: "Confirm",
+																			style: "destructive",
+																			onPress:
+																				() => {
+																					console.log(
+																						"uninvited"
+																					);
+																					invited.dispatch(
+																						(
+																							state
+																						) => {
+																							const invited =
+																								state.invited;
+																							invited.set(
+																								id,
+																								state.invited
+																									.get(
+																										id
+																									)!
+																									.filter(
+																										(
+																											_,
+																											index
+																										) =>
+																											index !=
+																											i
+																									)
+																							);
+																							return {
+																								invited,
+																							};
+																						}
+																					);
+																				},
+																		},
+																	]
+																);
+															}}
+														>
+															<AntDesign
+																name="close"
+																color={"white"}
+																size={16}
+															/>
+														</TouchableOpacity>
+													</View>
+												);
+											},
+											{
+												key: i,
+											}
+										);
+									})
+								) : (
+									<StyledText>No pending invites</StyledText>
+								)}
+							</View>
 						</View>
 						<View
 							style={{

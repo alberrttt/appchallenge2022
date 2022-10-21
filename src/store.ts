@@ -17,6 +17,7 @@ export const useListStore = create<ListState>((set) => {
 				appearance: appearance()({
 					color: colors500.red,
 				}),
+				participants: ["Kimberly", "Kyle", "Vincent"],
 			}),
 		] as EnrolledList[],
 		append_list: (list: EnrolledList) =>
@@ -44,6 +45,11 @@ export const useInvitesStore = create<InviteState>((set) => {
 				id: "1",
 				owner_name: "Vincent",
 				title: "Gardening",
+				list: list()({
+					owner_name: "Vincent",
+					name: "Gardening",
+					participants: ["Ethan", "Victor", "Vincent"],
+				}),
 			},
 		],
 		new_invite(invite_id: string, owner_name: string, title: string) {
@@ -54,6 +60,11 @@ export const useInvitesStore = create<InviteState>((set) => {
 						id: state.invites.length.toString(),
 						owner_name,
 						title,
+						list: list()({
+							owner_name,
+							name: title,
+							id: state.invites.length.toString(),
+						}),
 					},
 				],
 			}));

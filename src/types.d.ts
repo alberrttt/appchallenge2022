@@ -14,9 +14,11 @@ export interface EnrolledList {
 	name: string;
 	owner_name: string;
 	appearance: ListAppearance;
+	participants: string[];
 }
 export interface Invite {
 	id: string;
 	owner_name: string;
 	title: string;
+	list: EnrolledList;
 }

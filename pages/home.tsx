@@ -50,7 +50,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useInvitesStore, useListStore } from "../src/store";
 import { appearance, list } from "../src/utility";
 import { EnrolledList } from "../src/types";
-import { useAssignmentState } from "./list";
+import { useAssignmentState, useInvited } from "./list";
 export const HomeScreen = ({
 	navigation,
 }: NativeStackScreenProps<NativeStackParams, "Home">) => {
@@ -63,6 +63,7 @@ export const HomeScreen = ({
 	const state = useListStore((state) => state);
 	const modal_title = useState("title");
 	const invites = useInvitesStore();
+	const invited = useInvited();
 	const assignment = useAssignmentState();
 	return (
 		<>
@@ -466,13 +467,14 @@ export const InvitationButton: FC<{
 
 	const { invites, remove_invite } = useInvitesStore();
 	const list_state = useListStore();
-	const { id, owner_name, title }: Invite = invites[index] ?? {
+	const { id, owner_name, title, list }: Invite = invites[index] ?? {
 		id: "",
 		owner_name: "",
 		title: "",
 	};
 	const [options, setOptions] = useState(false);
 	const assignments = useAssignmentState();
+	const invited = useInvited();
 	return invites[index] ? (
 		<Animated.View style={{}}>
 			<View
@@ -523,13 +525,7 @@ export const InvitationButton: FC<{
 									style: "default",
 									text: "Accept",
 									onPress: () => {
-										list_state.append_list(
-											list()({
-												id: list_state.lists.length.toString(),
-												name: title,
-												owner_name,
-											})
-										);
+										list_state.append_list(list);
 										assignments.assigned.set(
 											list_state.lists.length.toString(),
 											[]
@@ -585,6 +581,7 @@ export const ListButton: FC<{
 	const navi = useNavigation();
 	const image = useMemo(() => random_images(), []);
 	const { name, owner_name } = list;
+	const invited = useInvited();
 	useEffect(() => {
 		navigation.addListener("focus", () => {
 			intoAnim.setValue(15 + 25 * index);
@@ -644,7 +641,10 @@ export const ListButton: FC<{
 					}}
 				>
 					<TouchableOpacity
-						onPress={() => {
+						onPressOut={() => {
+							if (!invited.invited.has(list.id)) {
+								invited.invited.set(list.id, new Array());
+							}
 							navigation.push("List", {
 								id: list.id,
 								index,
