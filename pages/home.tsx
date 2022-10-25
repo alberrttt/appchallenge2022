@@ -593,6 +593,7 @@ export const ListButton: FC<{
 			}).start();
 		});
 	}, []);
+	const assignments = useAssignmentState();
 	return (
 		<View
 			style={{
@@ -644,6 +645,14 @@ export const ListButton: FC<{
 						onPressOut={() => {
 							if (!invited.invited.has(list.id)) {
 								invited.invited.set(list.id, new Array());
+							}
+							if (
+								!assignments.selected_assignments.has(list.id)
+							) {
+								assignments.selected_assignments.set(
+									list.id,
+									[]
+								);
 							}
 							navigation.push("List", {
 								id: list.id,

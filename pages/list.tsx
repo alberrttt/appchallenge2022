@@ -73,14 +73,17 @@ export const useAssignmentState = create<AssignmentState>((set) => {
 				};
 			});
 		},
-		assigned: new Map<id, [string, string][]>([["0", []]]),
+		assigned: new Map<id, [string, string][]>([]),
 		add_assigned(id, name, description = "") {
 			set((state) => {
+				state.assigned.set(id, [
+					...state.assigned.get(id)!,
+					[name, description],
+				]);
+				console.log("AWDUAWUHJ");
+				console.log(id, name, description);
 				return {
-					assigned: state.assigned.set(id, [
-						...state.assigned.get(id)!,
-						[name, description],
-					]),
+					assigned: state.assigned,
 				};
 			});
 		},
@@ -215,7 +218,7 @@ export function List({
 								{participants.map((name, index) => (
 									<AssignmentSelection
 										key={index}
-										id={index.toString()}
+										id={id}
 										name={name as string}
 									/>
 								))}
@@ -240,7 +243,7 @@ export function List({
 									}
 									placeholder="Type here"
 									style={{
-										color: colors["Dim Gray"],
+										color: "#F2F2F2",
 									}}
 								/>
 							</View>
@@ -250,6 +253,13 @@ export function List({
 								alignSelf: "flex-end",
 							}}
 							onPress={() => {
+								console.log(
+									id,
+									assignments.selected_assignments.has(id)
+								);
+								console.log(
+									assignments.selected_assignments.get(id)
+								);
 								assignments.selected_assignments
 									.get(id)!
 									.forEach((name) => {
@@ -500,6 +510,7 @@ export function List({
 													<View
 														key={i}
 														style={{
+															marginTop: 4, 
 															padding: 8,
 															borderRadius: 8,
 															backgroundColor:

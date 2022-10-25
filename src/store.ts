@@ -10,16 +10,7 @@ interface ListState {
 }
 export const useListStore = create<ListState>((set) => {
 	return {
-		lists: [
-			list()({
-				name: "Helping Aunty Vivian",
-				owner_name: "Kimberly",
-				appearance: appearance()({
-					color: colors500.red,
-				}),
-				participants: ["Kimberly", "Kyle", "Vincent"],
-			}),
-		] as EnrolledList[],
+		lists: [] as EnrolledList[],
 		append_list: (list: EnrolledList) =>
 			set((state) => ({
 				lists: [...state.lists, list],
@@ -43,12 +34,12 @@ export const useInvitesStore = create<InviteState>((set) => {
 		invites: [
 			{
 				id: "1",
-				owner_name: "Vincent",
-				title: "Gardening",
+				owner_name: "Kimberly",
+				title: "Take care of Aunty Vivian",
 				list: list()({
-					owner_name: "Vincent",
-					name: "Gardening",
-					participants: ["Ethan", "Victor", "Vincent"],
+					owner_name: "Kimberly",
+					name: "Take care of Aunty Vivian",
+					participants: ["Kimberly", "Kyle", "Vincent"],
 				}),
 			},
 		],
